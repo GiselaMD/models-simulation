@@ -1,0 +1,16 @@
+### Node ###
+# Logs
+logs
+*.log
+npm-debug.log*
+
+coverage
+
+# Dependency directories
+node_modules/
+
+# rollup.js default build output
+dist/
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
