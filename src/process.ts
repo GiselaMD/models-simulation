@@ -16,10 +16,10 @@ export class Process {
   // Métodos
 
   /**
-   * getDuraion()
+   * getDuration()
    * @returns Duração do processo
    */
-  public getDuraion() {
+  public getDuration() {
     return this.duration
   }
 
