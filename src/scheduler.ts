@@ -30,20 +30,20 @@ export class Scheduler {
    * startProcessIn(processId: string, timeToStart: number)
    * @param processId
    * @param timeToStart
-   * @returns o agendamento do começo do processo num horário específico (11:15)
+   * @returns o agendamento do começo do processo daqui a 10 minutos.
    */
   public startProcessIn(processId: string, timeToStart: number) {
-    //TODO: Agenda o começo do processo num horário específico (11:15)
+    //TODO: Agenda o começo do processo daqui a 10 minutos.
   }
 
   /**
    * startProcessAt(processId: string, absoluteTime: number)
    * @param processId
    * @param absoluteTime
-   * @returns o agendamento do começo processo em um momento específico (depois de 10 minutos)
+   * @returns o agendamento do começo processo em um momento específico horário específico (11:15)
    */
   public startProcessAt(processId: string, absoluteTime: number) {
-    //TODO: Agenda o começo do processo em um momento específico (depois de 10 minutos)
+    //TODO: agendamento do começo processo em um momento específico horário específico (11:15)
   }
 
   /**
