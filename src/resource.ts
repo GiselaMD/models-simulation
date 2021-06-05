@@ -11,10 +11,9 @@ export class Resource {
     this.resourceId = uuid()
   }
 
-  // Métodos
-
   /**
    * allocate()
+   * @param quantity de recursos na fila
    * @returns a condição se o recurso foi alocado ou não
    */
   public allocate(quantity: number) {
@@ -24,6 +23,7 @@ export class Resource {
 
   /**
    * release()
+   * @param quantity de recursos na fila
    * @returns retira os recursos da fila
    */
   public release(quantity: number) {

@@ -7,8 +7,6 @@ import { Resource } from './resource'
 export class Scheduler {
   time: number = 0
 
-  // Métodos
-
   /**
    * getTime()
    * @returns o tempo atual do modelo
@@ -77,7 +75,7 @@ export class Scheduler {
 
   /**
    * simulateBy(duration: number)
-   * @param duration
+   * @param duration do processo
    * @returns
    */
   public simulateBy(duration: number) {
@@ -86,9 +84,10 @@ export class Scheduler {
 
   /**
    * simulateUntil()
-   * @returns
+   * @param absoluteTime tempo total da simulação
+   * @returns a simulação com o tempo absoluto
    */
-  public simulateUntil() {
+  public simulateUntil(absoluteTime: number) {
     //TODO:
   }
 
@@ -96,7 +95,7 @@ export class Scheduler {
 
   /**
    * createEntity(entity: Entity)
-   * @param entity
+   * @param entity recebe o objeto entidade
    */
   public createEntity(entity: Entity) {
     //TODO:
@@ -104,7 +103,7 @@ export class Scheduler {
 
   /**
    * destroyEntity(entity: Entity)
-   * @param entity
+   * @param entity recebe o objeto entidade
    */
   public destroyEntity(entity: Entity) {
     //TODO:
@@ -112,7 +111,7 @@ export class Scheduler {
 
   /**
    * getEntity(id: string)
-   * @param id
+   * @param id recebe o identificador da entidade
    */
   public getEntity(id: string) {
     //TODO:
@@ -120,8 +119,8 @@ export class Scheduler {
 
   /**
    * createResource(name: string, quantity: number)
-   * @param name
-   * @param quantity
+   * @param name possui o nome do recurso
+   * @param quantity recebe a quantidade alocada ao recurso
    * @returns
    */
   public createResource(name: string, quantity: number) {
@@ -131,7 +130,7 @@ export class Scheduler {
 
   /**
    * getResource(id: string)
-   * @param id
+   * @param id recebe o identificador do Recurso
    * @returns
    */
   public getResource(id: string) {
@@ -141,9 +140,9 @@ export class Scheduler {
 
   /**
    * createProcess(name: string, duration: number)
-   * @param name
-   * @param duration
-   * @returns
+   * @param name recebe o nome do processo
+   * @param duration aloca um tempo específico de duração
+   * @returns o id do Processo criado.
    */
   public createProcess(name: string, duration: number) {
     return 'processId'
@@ -151,8 +150,8 @@ export class Scheduler {
 
   /**
    * getProcess(processId: string)
-   * @param processId
-   * @returns
+   * @param processId recebe o identificador do processo
+   * @returns o objeto Processo
    */
   public getProcess(processId: string) {
     return Process
@@ -160,10 +159,10 @@ export class Scheduler {
 
   /**
    * createEntitySet(name: string, mode: Mode, maxPossibleSize: number)
-   * @param name
-   * @param mode
-   * @param maxPossibleSize
-   * @returns
+   * @param name possui o nome da entidade
+   * @param mode seleciona o modo utilizado
+   * @param maxPossibleSize passa o tamanho máximo da entity set
+   * @returns o id do EntitySet
    */
   public createEntitySet(name: string, mode: Mode, maxPossibleSize: number) {
     return 'id'
@@ -171,8 +170,8 @@ export class Scheduler {
 
   /**
    * getEntitySet(id: string)
-   * @param id
-   * @returns
+   * @param id referente a entidade
+   * @returns o EntitySet
    */
   public getEntitySet(id: string) {
     return EntitySet
@@ -182,9 +181,9 @@ export class Scheduler {
 
   /**
    * uniform(minValue: number, maxValue: number)
-   * @param minValue
-   * @param maxValue
-   * @returns
+   * @param minValue recebe o menor valor
+   * @param maxValue recebe o maior valor
+   * @returns o resultado da operação
    */
   public uniform(minValue: number, maxValue: number) {
     return 0
@@ -192,8 +191,8 @@ export class Scheduler {
 
   /**
    * exponential(meanValue: number)
-   * @param meanValue
-   * @returns
+   * @param meanValue recebe o valor médio
+   * @returns o resultado da operação
    */
   public exponential(meanValue: number) {
     return 0
@@ -201,9 +200,9 @@ export class Scheduler {
 
   /**
    * normal(meanValue: number, stdDeviationValue: number)
-   * @param meanValue
-   * @param stdDeviationValue
-   * @returns
+   * @param meanValue recebe o valor médio
+   * @param stdDeviationValue utiliza o valor de desvio do valor
+   * @returns o resultado da operação
    */
   public normal(meanValue: number, stdDeviationValue: number) {
     return 0
@@ -212,7 +211,7 @@ export class Scheduler {
   // ---------- coleta de estatísticas ----------
 
   /**
-   *
+   * getEntityTotalQuantity()
    * @returns quantidade de entidades criadas até o momento
    */
   public getEntityTotalQuantity() {
@@ -220,8 +219,8 @@ export class Scheduler {
   }
 
   /**
-   *
-   * @param name
+   * getEntityTotalQuantityByName(name: string)
+   * @param name recebe o nome da entidade
    * @returns quantidade de entidades criadas até o momento com o nome informado
    */
   public getEntityTotalQuantityByName(name: string) {
@@ -229,7 +228,7 @@ export class Scheduler {
   }
 
   /**
-   *
+   * averageTimeInModel()
    * @returns tempo médio que as entidades permanecem no modelo (desde sua criação até sua destruição)
    */
   public averageTimeInModel() {
@@ -237,7 +236,7 @@ export class Scheduler {
   }
 
   /**
-   *
+   * maxEntitiesPresent()
    * @returns número máximo de entidades presentes no modelo até o momento
    */
   public maxEntitiesPresent() {

@@ -15,8 +15,6 @@ export class Entity {
     this.petriNet = petriNet
   }
 
-  // Métodos
-
   /**
    * getId()
    * @returns Entity id

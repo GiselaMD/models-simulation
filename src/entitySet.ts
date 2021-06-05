@@ -23,8 +23,6 @@ export class EntitySet {
     this.set = []
   }
 
-  // Métodos
-
   /**
    * getMode()
    * @returns Modo da fila EntitySet
