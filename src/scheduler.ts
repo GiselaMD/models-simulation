@@ -1,5 +1,4 @@
 import { Mode } from 'fs'
-import { uuid } from 'uuidv4'
 import { Entity } from './entity'
 import { EntitySet } from './entitySet'
 import { Process } from './process'
@@ -100,6 +99,14 @@ export class Scheduler {
    * @param entity
    */
   public createEntity(entity: Entity) {
+    //TODO:
+  }
+
+  /**
+   * destroyEntity(entity: Entity)
+   * @param entity
+   */
+  public destroyEntity(entity: Entity) {
     //TODO:
   }
 
@@ -206,7 +213,7 @@ export class Scheduler {
 
   /**
    *
-   * @returns
+   * @returns quantidade de entidades criadas até o momento
    */
   public getEntityTotalQuantity() {
     return 0
@@ -215,7 +222,7 @@ export class Scheduler {
   /**
    *
    * @param name
-   * @returns
+   * @returns quantidade de entidades criadas até o momento com o nome informado
    */
   public getEntityTotalQuantityByName(name: string) {
     return 0
@@ -223,7 +230,7 @@ export class Scheduler {
 
   /**
    *
-   * @returns
+   * @returns tempo médio que as entidades permanecem no modelo (desde sua criação até sua destruição)
    */
   public averageTimeInModel() {
     return 0
@@ -231,7 +238,7 @@ export class Scheduler {
 
   /**
    *
-   * @returns
+   * @returns número máximo de entidades presentes no modelo até o momento
    */
   public maxEntitiesPresent() {
     return 0
