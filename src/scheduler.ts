@@ -1,6 +1,7 @@
-import { Mode } from 'fs'
+// https://github.com/bestickley/random-variate-generators
+import { RandVarGen } from 'random-variate-generators'
 import { Entity } from './entity'
-import { EntitySet } from './entitySet'
+import { EntitySet, Mode } from './entitySet'
 import { Process } from './process'
 import { Resource } from './resource'
 
@@ -186,7 +187,8 @@ export class Scheduler {
    * @returns o resultado da operação
    */
   public uniform(minValue: number, maxValue: number) {
-    return 0
+    const rvg = new RandVarGen()
+    rvg.uniform(minValue, maxValue)
   }
 
   /**
@@ -195,7 +197,8 @@ export class Scheduler {
    * @returns o resultado da operação
    */
   public exponential(meanValue: number) {
-    return 0
+    const rvg = new RandVarGen()
+    rvg.exponential(meanValue)
   }
 
   /**
@@ -205,7 +208,8 @@ export class Scheduler {
    * @returns o resultado da operação
    */
   public normal(meanValue: number, stdDeviationValue: number) {
-    return 0
+    const rvg = new RandVarGen()
+    rvg.normal(meanValue, stdDeviationValue)
   }
 
   // ---------- coleta de estatísticas ----------
