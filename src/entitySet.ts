@@ -1,7 +1,7 @@
 import { uuid } from 'uuidv4'
 import { Entity } from './entity'
 
-const enum Mode {
+export const enum Mode {
   FIFO = 'FIFO',
   LIFO = 'LIFO',
   P_BASED = 'P_BASED', // priority based
