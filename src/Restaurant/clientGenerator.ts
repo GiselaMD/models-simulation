@@ -15,7 +15,8 @@ export class ClientGenerator extends Process {
 
   public newClient(time: number) {
     if (time < super.getDuration())
-      this.filaClientes.insert(new Agent({name: 'cliente'}))
-      // Retorna tempo para proxima execucao (executar daqui 100 segundos)
-      return 100
+      this.filaClientes.insert(new Agent({ name: 'cliente' }))
+    // Retorna tempo para proxima execucao (executar daqui 100 segundos)
+    return 100
+  }
 }
