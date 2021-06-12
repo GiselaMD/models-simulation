@@ -1,3 +1,5 @@
+import { Entity } from './entity'
+import { EntitySet, Mode } from './entitySet'
 import { Agent } from './Restaurant/agent'
 import { ClientGenerator } from './Restaurant/clientGenerator'
 import { Pool } from './Restaurant/pool'
@@ -5,7 +7,18 @@ import { Scheduler } from './scheduler'
 
 const scheduler = new Scheduler()
 
-scheduler.createProcess('cliente', 1000)
+// Cria o proceso de um cliente (clientes entrando na loja e esperando para ser atendido)
+const id = scheduler.createProcess(
+  new ClientGenerator(
+    'cliente',
+    0,
+    new EntitySet('cliente', 'FIFO' as Mode, 9999)
+  )
+)
+// Agenda processo para executar daqui tempo uniform
+scheduler.startProcessIn(id, scheduler.uniform(1, 10))
+
+scheduler.simulateOneStep()
 
 // Entity
 
