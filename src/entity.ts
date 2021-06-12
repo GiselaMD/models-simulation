@@ -1,18 +1,20 @@
-import { uuid } from 'uuidv4'
+import { EntitySet } from './entitySet'
 
 export class Entity {
-  id: string
+  id: string | null
   name: string
   creationTime: number
   priority: number // -1 sem prioridade, 0 + alta até 255 + baixa
   petriNet: any // incluir a rede de petri
+  sets: EntitySet[] // ids de sets
 
-  constructor(name: string, petriNet: any) {
-    this.id = uuid()
+  constructor({ name, petriNet }: { name: string; petriNet?: any }) {
+    this.id = null
     this.name = name
-    this.creationTime = 0 // TODO: define this
-    this.priority = -1 // set no priority
+    this.creationTime = 0
+    this.priority = -1 // set no priority as default
     this.petriNet = petriNet
+    this.sets = []
   }
 
   /**
@@ -32,7 +34,40 @@ export class Entity {
   }
 
   /**
-   * setPriority(priority)
+   * getTimeSinceCreation(now)
+   * @param now - Tempo atual do modelo
+   * @returns Tempo desde a criação
+   */
+  public getTimeSinceCreation(now: number): number {
+    return now - this.creationTime
+  }
+
+  /**
+   * getSets()
+   * @returns Lista de filas nas quais a entidade está inserida
+   */
+  public getSets(): EntitySet[] {
+    return this.sets
+  }
+
+  /**
+   * setSet()
+   * @param EntitySet - Adiciona uma nova fila na lista de filas desta entidade
+   */
+  public setSet(entitySet: EntitySet) {
+    this.sets.push(entitySet)
+  }
+
+  /**
+   * setId()
+   * @param id - Id da Entidade
+   */
+  public setId(id: string) {
+    this.id = id
+  }
+
+  /**
+   * setPriority()
    * @param priority - prioridade da Entidade
    */
   public setPriority(priority: number) {
@@ -40,21 +75,11 @@ export class Entity {
   }
 
   /**
-   * getTimeSinceCreation()
-   * @returns Time since creation
+   * setCreationTime()
+   * @param time - Tempo de criação
    */
-  public getTimeSinceCreation() {
-    // TODO
-    return null
-  }
-
-  /**
-   * getSets()
-   * @returns Lista de filas nas quais a entidade está inserida
-   */
-  public getSets() {
-    // TODO
-    return null
+  public setCreationTime(time: number) {
+    this.creationTime = time
   }
 
   /**

@@ -1,4 +1,3 @@
-// https://github.com/bestickley/random-variate-generators
 import { RandVarGen } from 'random-variate-generators'
 import { Entity } from './entity'
 import { EntitySet, Mode } from './entitySet'
@@ -7,6 +6,7 @@ import { Resource } from './resource'
 
 export class Scheduler {
   time: number = 0
+  procces: Array<Process> = []
 
   /**
    * getTime()
@@ -146,7 +146,8 @@ export class Scheduler {
    * @returns o id do Processo criado.
    */
   public createProcess(name: string, duration: number) {
-    return 'processId'
+    const processo = new Process(name, duration)
+    return processo.getProcessId()
   }
 
   /**

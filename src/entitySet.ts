@@ -1,4 +1,3 @@
-import { uuid } from 'uuidv4'
 import { Entity } from './entity'
 
 export const enum Mode {
@@ -8,19 +7,40 @@ export const enum Mode {
   NONE = 'NONE', // if none, método remove() sorteia qual entidade será removida. Utilizar removeById(id)
 }
 
+interface TimeInSet {
+  [key: string]: {
+    duration: number
+    creation: number
+  }
+}
+
+interface Log {
+  time: number
+  size: number
+}
+
 export class EntitySet {
-  id: string
+  id: string | null
   name: string
   mode: Mode
-  set: Array<Entity>
-  maxPossibleSize: number
+  set: Entity[]
+  maxPossibleSize: number // 0 caso não tenha limite
+
+  setSize: number[]
+  setTime: TimeInSet
+  log: Log[]
+  isRunningLog: boolean
 
   constructor(name: string, mode: Mode, maxPossibleSize: number) {
-    this.id = uuid()
+    this.id = null
     this.name = name
     this.mode = mode
     this.maxPossibleSize = maxPossibleSize
     this.set = []
+    this.setSize = []
+    this.setTime = {}
+    this.log = []
+    this.isRunningLog = false
   }
 
   /**
@@ -43,8 +63,24 @@ export class EntitySet {
    * insert(Entity)
    * @returns Insere entidade na EntitySet
    */
-  public insert(Entity: Entity) {
-    this.set.push(Entity)
+  public insert(entity: Entity) {
+    if (this.isFull()) {
+      console.error('EntitySet is full')
+      return
+    }
+    if (!entity.id) {
+      console.error('Id not setted in entity')
+      return
+    }
+
+    this.set.push(entity)
+
+    this.setTime[entity.id] = {
+      duration: 0,
+      creation: Date.now(),
+    }
+
+    this.updateSetSize()
   }
 
   /**
@@ -52,15 +88,43 @@ export class EntitySet {
    * @returns Remove da lista
    */
   public remove() {
-    this.set.pop()
+    const entityRemoved = this.set.pop()
+
+    if (!entityRemoved || !entityRemoved.id) {
+      console.error('Unable to remove Entity')
+      return
+    }
+
+    this.updateSetSize()
+
+    // duration = Date.now - creation
+    const entityTime = this.setTime[entityRemoved.id]
+    entityTime.duration = Date.now() - entityTime.creation
   }
 
   /**
    * removeById(id)
    * @returns Remove uma entidade específica da lista
    */
-  public removeById(id: string) {
-    this.set = this.set.filter(entity => entity.id !== id)
+  public removeById(id: string): Entity | null {
+    const index = this.set.findIndex(entity => entity.id === id)
+    const [removed] = this.set.splice(index, 1)
+
+    if (!removed || !removed.id) {
+      console.error('Unable to remove Entity')
+      return null
+    }
+    this.updateSetSize()
+
+    // duration = Date.now - creation
+    const entityTime = this.setTime[removed.id]
+    entityTime.duration = Date.now() - entityTime.creation
+
+    return removed
+  }
+
+  private updateSetSize() {
+    this.setSize.push(this.set.length)
   }
 
   /**
@@ -76,6 +140,11 @@ export class EntitySet {
    * @returns Verifica se a fila está cheia
    */
   public isFull() {
+    // zero não tem limite de tamaho
+    if (this.maxPossibleSize === 0) {
+      return false
+    }
+
     return this.set.length === this.maxPossibleSize
   }
 
@@ -83,23 +152,25 @@ export class EntitySet {
    * findEntity(id)
    * @returns Retorna referência para uma Entity, se esta estiver presente nesta EntitySet coleta de estatísticas
    */
-  public findEntity(id: string) {
-    return this.set.filter(entity => entity.id !== id)?.[0]
+  public findEntity(id: string): Entity | undefined {
+    return this.set.find(entity => entity.id !== id)
   }
+
+  // Coleta de estatísticas
 
   /**
    * averageSize()
    * @returns Retorna quantidade média de entidades no conjunto
    */
-  public averageSize() {
-    // TODO
+  public averageSize(): number {
+    return this.setSize.reduce((a, b) => a + b, 0) / this.setSize.length
   }
 
   /**
    * getSize()
    * @returns Retorna quantidade de entidades presentes no conjunto no momento
    */
-  public getSize() {
+  public getSize(): number {
     return this.set.length
   }
 
@@ -107,7 +178,7 @@ export class EntitySet {
    * getMaxPossibleSize()
    * @returns Retorna quantidade máxima da fila
    */
-  public getMaxPossibleSize() {
+  public getMaxPossibleSize(): number {
     return this.maxPossibleSize
   }
 
@@ -116,7 +187,35 @@ export class EntitySet {
    * @returns Define quantidade máxima da fila
    */
   public setMaxPossibleSize(size: number) {
-    return (this.maxPossibleSize = size)
+    this.maxPossibleSize = size
+  }
+
+  private calculateDurations() {
+    let total = 0
+    let max = 0
+
+    // clone object
+    // TODO: validar com o sor se deve considerar o tempo das entidades ativas
+    // const timeValues = JSON.parse(JSON.stringify(Object.values(this.setTime)))
+
+    // se time.duration === 0, então a entidade não foi removida e deve atualizar o duration
+
+    const timeValues = Object.values(this.setTime).filter(
+      time => time.duration !== 0
+    )
+
+    for (const time of timeValues) {
+      // if (time.duration === 0) {
+      //   time.duration = Date.now() - time.creation
+      // }
+      total += time.duration
+
+      if (time.duration > max) {
+        max = time.duration
+      }
+    }
+    const mean = total / timeValues.length
+    return { mean, max }
   }
 
   /**
@@ -124,7 +223,7 @@ export class EntitySet {
    * @returns Retorna tempo médio que as entidades permaneceram neste conjunto
    */
   public averageTimeInSet() {
-    // TODO
+    return this.calculateDurations().mean
   }
 
   /**
@@ -132,24 +231,29 @@ export class EntitySet {
    * @returns Retorna tempo mais longo que uma entidade permaneceu neste conjunto
    */
   public maxTimeInSet() {
-    // TODO
+    return this.calculateDurations().max
   }
 
   /**
    * startLog(timeGap)
+   * @param timeGap - período em segundos
    * @returns Dispara a coleta (log) do tamanho do conjunto;
    * Esta coleta é realizada a cada timeGap unidades de tempo
    */
-  public startLog(timeGap: any) {
-    // TODO
+  public startLog(timeGap: number): void {
+    setInterval(() => {
+      if (this.isRunningLog) {
+        this.log.push({ time: Date.now(), size: this.set.length })
+      }
+    }, timeGap * 1000)
   }
 
   /**
    * stopLog()
    * @returns Para a coleta (log)
    */
-  public stopLog() {
-    // TODO
+  public stopLog(): void {
+    this.isRunningLog = false
   }
 
   /**
@@ -157,7 +261,7 @@ export class EntitySet {
    * @returns retorna uma lista contendo o log deste Resource até o momento;
    * Cada elemento desta lista é um par <tempoAbsoluto, tamanhoConjunto>
    */
-  public getLog() {
-    // TODO
+  public getLog(): Log[] {
+    return this.log
   }
 }

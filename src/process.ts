@@ -16,6 +16,14 @@ export class Process {
   // Métodos
 
   /**
+   * getProcessId()
+   * @returns ID do processo
+   */
+  public getProcessId() {
+    return this.processId
+  }
+
+  /**
    * getDuration()
    * @returns Duração do processo
    */
