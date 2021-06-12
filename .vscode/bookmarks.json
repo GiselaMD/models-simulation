@@ -1,0 +1,24 @@
+{
+	"files": [
+		{
+			"path": "src/scheduler.ts",
+			"bookmarks": [
+				{
+					"line": 35,
+					"column": 9,
+					"label": ""
+				},
+				{
+					"line": 73,
+					"column": 6,
+					"label": ""
+				},
+				{
+					"line": 162,
+					"column": 11,
+					"label": ""
+				}
+			]
+		}
+	]
+}

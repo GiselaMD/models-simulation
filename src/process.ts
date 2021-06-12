@@ -5,12 +5,14 @@ export class Process {
   processId: string
   duration: number
   active: boolean
+  nextExecution: number
 
   constructor(name: string, duration: number) {
     this.name = name
     this.duration = duration
     this.processId = uuid()
     this.active = true
+    this.nextExecution = 0
   }
 
   // Métodos
@@ -32,6 +34,22 @@ export class Process {
   }
 
   /**
+   * getNextExecution()
+   * @returns Quando o processo será executado
+   */
+  public getNextExecution() {
+    return this.nextExecution
+  }
+
+  /**
+   * setNextExecution()
+   * @returns Edita quando o processo será executado
+   */
+  public setNextExecution(time: number) {
+    this.nextExecution = time
+  }
+
+  /**
    * isActive()
    * @returns Status do processo, ativo ou não
    */
@@ -45,5 +63,40 @@ export class Process {
    */
   public activate(bool: boolean) {
     this.active = bool
+  }
+
+  /**
+   * execute()
+   * @returns executa quando for chamado
+   */
+  public execute() {
+    this.executeOnStart()
+    this.executeNow()
+    this.executeAfter()
+  }
+
+  /**
+   * executeOnStart()
+   * @returns faz antes de executar o processo
+   */
+  public executeOnStart() {
+    return
+  }
+
+  /**
+   * execute()
+   * @returns executa
+   */
+  public executeNow() {
+    console.error('Método não implementado')
+  }
+
+  /**
+   * executeOnStart()
+   * @returns faz depois de executar o processo
+   */
+  //TODO: Descobrir o nome certo dentro do AnyLogic
+  public executeAfter() {
+    return
   }
 }

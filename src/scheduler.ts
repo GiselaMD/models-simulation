@@ -6,7 +6,7 @@ import { Resource } from './resource'
 
 export class Scheduler {
   time: number = 0
-  procces: Array<Process> = []
+  allProcess: Array<Process> = []
 
   /**
    * getTime()
@@ -34,7 +34,8 @@ export class Scheduler {
    * @returns o agendamento do começo do processo daqui a 10 minutos.
    */
   public startProcessIn(processId: string, timeToStart: number) {
-    //TODO: Agenda o começo do processo daqui a 10 minutos.
+    const process = this.getProcess(processId)
+    process?.setNextExecution(timeToStart)
   }
 
   /**
@@ -72,6 +73,11 @@ export class Scheduler {
    */
   public simulateOneStep() {
     //TODO:
+    for (let process of this.allProcess) {
+      if (process.isActive() && process.getNextExecution() == this.getTime()) {
+        process.execute()
+      }
+    }
   }
 
   /**
@@ -145,9 +151,14 @@ export class Scheduler {
    * @param duration aloca um tempo específico de duração
    * @returns o id do Processo criado.
    */
-  public createProcess(name: string, duration: number) {
-    const processo = new Process(name, duration)
-    return processo.getProcessId()
+  // public createProcess(name: string, duration: number) {
+  //   const process = new Process(name, duration)
+  //   this.allProcess.push(process)
+  //   return process.getProcessId()
+  // }
+  public createProcess(process: Process) {
+    this.allProcess.push(process)
+    return process.getProcessId()
   }
 
   /**
@@ -156,7 +167,13 @@ export class Scheduler {
    * @returns o objeto Processo
    */
   public getProcess(processId: string) {
-    return Process
+    for (let process of this.allProcess) {
+      if (process.getProcessId() == processId) {
+        return process
+      }
+    }
+    console.error(`getProcess: Processo com ID ${processId} nao existe`)
+    return
   }
 
   /**
@@ -189,7 +206,7 @@ export class Scheduler {
    */
   public uniform(minValue: number, maxValue: number) {
     const rvg = new RandVarGen()
-    rvg.uniform(minValue, maxValue)
+    return rvg.uniform(minValue, maxValue)
   }
 
   /**
@@ -199,7 +216,7 @@ export class Scheduler {
    */
   public exponential(meanValue: number) {
     const rvg = new RandVarGen()
-    rvg.exponential(meanValue)
+    return rvg.exponential(meanValue)
   }
 
   /**
@@ -210,7 +227,7 @@ export class Scheduler {
    */
   public normal(meanValue: number, stdDeviationValue: number) {
     const rvg = new RandVarGen()
-    rvg.normal(meanValue, stdDeviationValue)
+    return rvg.normal(meanValue, stdDeviationValue)
   }
 
   // ---------- coleta de estatísticas ----------

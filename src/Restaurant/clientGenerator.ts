@@ -1,7 +1,6 @@
+import { Entity } from 'src/entity'
 import { EntitySet } from 'src/entitySet'
 import { Process } from 'src/process'
-import { Scheduler } from 'src/scheduler'
-import { Agent } from './agent'
 
 export class ClientGenerator extends Process {
   //timeLimit: number
@@ -13,9 +12,13 @@ export class ClientGenerator extends Process {
     //this.timeLimit = duration
   }
 
-  public newClient(time: number) {
-    if (time < super.getDuration())
-      this.filaClientes.insert(new Agent({ name: 'cliente' }))
+  public executeNow() {
+    if (
+      this.filaClientes.getMaxPossibleSize() <=
+      this.filaClientes.getSize() + 1
+    )
+      this.filaClientes.insert(new Entity({ name: 'cliente' }))
+
     // Retorna tempo para proxima execucao (executar daqui 100 segundos)
     return 100
   }
