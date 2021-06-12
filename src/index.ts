@@ -7,13 +7,9 @@ import { Scheduler } from './scheduler'
 
 const scheduler = new Scheduler()
 
-// Cria o proceso de um cliente (clientes entrando na loja e esperando para ser atendido)
+// Cria o proceso de um cliente (clientes entrando no restaurante e esperando para ser atendido)
 const id = scheduler.createProcess(
-  new ClientGenerator(
-    'cliente',
-    0,
-    new EntitySet('cliente', 'FIFO' as Mode, 9999)
-  )
+  new ClientGenerator('cliente', 0, new EntitySet('cliente', 'FIFO', 9999))
 )
 // Agenda processo para executar daqui tempo uniform
 scheduler.startProcessIn(id, scheduler.uniform(1, 10))

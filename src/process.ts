@@ -1,28 +1,24 @@
-import { uuid } from 'uuidv4'
-
 export class Process {
   name: string
-  processId: string
+  id: string | null
   duration: number
   active: boolean
-  nextExecution: number
 
   constructor(name: string, duration: number) {
+    this.id = null
     this.name = name
     this.duration = duration
-    this.processId = uuid()
     this.active = true
-    this.nextExecution = 0
   }
 
   // Métodos
 
   /**
-   * getProcessId()
+   * getId()
    * @returns ID do processo
    */
-  public getProcessId() {
-    return this.processId
+  public getId() {
+    return this.id
   }
 
   /**
@@ -34,26 +30,18 @@ export class Process {
   }
 
   /**
-   * getNextExecution()
-   * @returns Quando o processo será executado
+   * setId()
+   * @param id - Id do process
    */
-  public getNextExecution() {
-    return this.nextExecution
-  }
-
-  /**
-   * setNextExecution()
-   * @returns Edita quando o processo será executado
-   */
-  public setNextExecution(time: number) {
-    this.nextExecution = time
+  public setId(id: string): void {
+    this.id = id
   }
 
   /**
    * isActive()
    * @returns Status do processo, ativo ou não
    */
-  public isActive() {
+  public isActive(): boolean {
     return this.active
   }
 
@@ -61,42 +49,35 @@ export class Process {
    * activate(bool)
    * @returns seta o status do processo, ativo ou não
    */
-  public activate(bool: boolean) {
-    this.active = bool
+  public setActive(active: boolean) {
+    this.active = active
   }
 
-  /**
-   * execute()
-   * @returns executa quando for chamado
-   */
-  public execute() {
-    this.executeOnStart()
-    this.executeNow()
-    this.executeAfter()
-  }
+  // /**
+  //  * execute()
+  //  * @returns executa quando for chamado
+  //  */
+  // public execute() {
+  //   this.executeOnStart()
+  //   this.executeNow()
+  //   this.executeOnEnd()
+  // }
 
   /**
    * executeOnStart()
    * @returns faz antes de executar o processo
    */
-  public executeOnStart() {
-    return
-  }
+  public executeOnStart(): void {}
+
+  // /**
+  //  * executeNow()
+  //  * @returns executa no momento atual
+  //  */
+  // public executeNow(): void {}
 
   /**
-   * execute()
-   * @returns executa
-   */
-  public executeNow() {
-    console.error('Método não implementado')
-  }
-
-  /**
-   * executeOnStart()
+   * executeOnEnd()
    * @returns faz depois de executar o processo
    */
-  //TODO: Descobrir o nome certo dentro do AnyLogic
-  public executeAfter() {
-    return
-  }
+  public executeOnEnd(): void {}
 }

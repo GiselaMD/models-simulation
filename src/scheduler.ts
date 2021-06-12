@@ -3,10 +3,20 @@ import { Entity } from './entity'
 import { EntitySet, Mode } from './entitySet'
 import { Process } from './process'
 import { Resource } from './resource'
+import { uuid } from 'uuidv4'
 
+interface ProcessSchedule {
+  [key: number]: Process[]
+}
 export class Scheduler {
   time: number = 0
-  allProcess: Array<Process> = []
+  processSchedule: ProcessSchedule = {}
+  entityList: Entity[] = []
+  resourceList: Resource[] = []
+  processList: Process[] = []
+  entitySetList: EntitySet[] = []
+  destroyedEntities: Entity[] = []
+  maxActiveEntities: number = 0
 
   /**
    * getTime()
@@ -24,28 +34,36 @@ export class Scheduler {
    * @returns Inicializa o processo.
    */
   public startProcessNow(process: Process) {
-    //TODO: Inicializa o processo.
+    this.startProcessAt(process, this.time)
+
+    // TODO: mover pro simulate
+    // process.executeOnStart()
+    // this.time += process.duration // clock é o tempo atual mais o tempo decorrido no processo
+    // process.executeOnEnd()
   }
 
   /**
-   * startProcessIn(processId: string, timeToStart: number)
-   * @param processId
+   * startProcessIn(process: string, timeToStart: number)
+   * @param process
    * @param timeToStart
    * @returns o agendamento do começo do processo daqui a 10 minutos.
    */
-  public startProcessIn(processId: string, timeToStart: number) {
-    const process = this.getProcess(processId)
-    process?.setNextExecution(timeToStart)
+  public startProcessIn(process: Process, timeToStart: number) {
+    this.startProcessAt(process, this.time + timeToStart)
   }
 
   /**
-   * startProcessAt(processId: string, absoluteTime: number)
-   * @param processId
+   * startProcessAt(process: string, absoluteTime: number)
+   * @param process
    * @param absoluteTime
-   * @returns o agendamento do começo processo em um momento específico horário específico (11:15)
+   * @returns o agendamento do começo processo em um momento específico
    */
-  public startProcessAt(processId: string, absoluteTime: number) {
-    //TODO: agendamento do começo processo em um momento específico horário específico (11:15)
+  public startProcessAt(process: Process, absoluteTime: number) {
+    this.processSchedule = {
+      ...this.processSchedule,
+      [absoluteTime]: [...this.processSchedule[absoluteTime], process],
+    }
+    console.log(`processSchedule`, this.processSchedule)
   }
 
   /**
@@ -53,31 +71,44 @@ export class Scheduler {
    * @param time
    * @returns se a abordagem para especificação da passagem de tempo nos processos for explícita
    */
-  public waitFor(time: number) {
-    //TODO: Pendente
+  public async waitFor(time: number) {
+    // sleep
+    return new Promise(resolve => setTimeout(resolve, time * 1000))
   }
 
   // ---------- Controlando tempo de execução ----------
 
+  private isProcessScheduleEmpty() {
+    for (const processList of Object.values(this.processSchedule)) {
+      if (processList.length !== 0) return false
+    }
+    return true
+  }
+
   /**
    * simulate()
+   * executa até esgotar o modelo, isto é, até a engine não ter mais nada para processar
    * @returns
    */
   public simulate() {
-    //TODO:
+    while (!this.isProcessScheduleEmpty()) {
+      //TODO: init
+      this.time++
+    }
   }
 
   /**
    * simulateOneStep()
+   *
    * @returns
    */
   public simulateOneStep() {
     //TODO:
-    for (let process of this.allProcess) {
-      if (process.isActive() && process.getNextExecution() == this.getTime()) {
-        process.execute()
-      }
-    }
+    // for (let process of this.processList) {
+    //   if (process.isActive() && process.getNextExecution() == this.getTime()) {
+    //     process.execute()
+    //   }
+    // }
   }
 
   /**
@@ -86,7 +117,10 @@ export class Scheduler {
    * @returns
    */
   public simulateBy(duration: number) {
-    //TODO:
+    for (let i = duration; i > 0; i--) {
+      //TODO: init
+      this.time++
+    }
   }
 
   /**
@@ -95,7 +129,10 @@ export class Scheduler {
    * @returns a simulação com o tempo absoluto
    */
   public simulateUntil(absoluteTime: number) {
-    //TODO:
+    for (let i = this.time; i <= absoluteTime; i++) {
+      //TODO: init
+      this.time++
+    }
   }
 
   // ---------- criação, destruição e acesso para componentes ----------
@@ -103,17 +140,29 @@ export class Scheduler {
   /**
    * createEntity(entity: Entity)
    * @param entity recebe o objeto entidade
+   * @returns retorna o Entity
    */
-  public createEntity(entity: Entity) {
-    //TODO:
+  public createEntity(entity: Entity): Entity {
+    entity.setId(uuid())
+    entity.setCreationTime(this.time)
+    this.entityList.push(entity)
+
+    if (this.maxActiveEntities < this.entityList.length) {
+      this.maxActiveEntities = this.entityList.length
+    }
+
+    return entity
   }
 
   /**
-   * destroyEntity(entity: Entity)
+   * destroyEntity(id: string)
    * @param entity recebe o objeto entidade
    */
-  public destroyEntity(entity: Entity) {
-    //TODO:
+  public destroyEntity(id: string) {
+    const entityIndex = this.entityList.findIndex(entity => entity.id === id)
+    const [detroyedEntity] = this.entityList.splice(entityIndex, 1)
+    detroyedEntity?.setDestroyedTime(this.time)
+    this.destroyedEntities.push(detroyedEntity)
   }
 
   /**
@@ -121,18 +170,25 @@ export class Scheduler {
    * @param id recebe o identificador da entidade
    */
   public getEntity(id: string) {
-    //TODO:
+    const entity = this.entityList.find(entity => entity.getId() === id)
+
+    if (!entity) {
+      console.error(`getEntity: entity com ID ${id} nao existe`)
+    }
+
+    return entity
   }
 
   /**
-   * createResource(name: string, quantity: number)
+   * createResource(resource: Resource)
    * @param name possui o nome do recurso
    * @param quantity recebe a quantidade alocada ao recurso
    * @returns
    */
-  public createResource(name: string, quantity: number) {
-    //TODO:
-    return 'id'
+  public createResource(resource: Resource) {
+    resource.setId(uuid())
+    this.resourceList.push(resource)
+    return resource
   }
 
   /**
@@ -141,8 +197,13 @@ export class Scheduler {
    * @returns
    */
   public getResource(id: string) {
-    //TODO: Pegar do vetor onde tá o resource. Alterar...
-    return Resource
+    const resource = this.resourceList.find(resource => resource.getId() === id)
+
+    if (!resource) {
+      console.error(`getResource: resource com ID ${id} nao existe`)
+    }
+
+    return resource
   }
 
   /**
@@ -151,14 +212,10 @@ export class Scheduler {
    * @param duration aloca um tempo específico de duração
    * @returns o id do Processo criado.
    */
-  // public createProcess(name: string, duration: number) {
-  //   const process = new Process(name, duration)
-  //   this.allProcess.push(process)
-  //   return process.getProcessId()
-  // }
-  public createProcess(process: Process) {
-    this.allProcess.push(process)
-    return process.getProcessId()
+  public createProcess(process: Process): Process {
+    process.setId(uuid())
+    this.processList.push(process)
+    return process
   }
 
   /**
@@ -166,25 +223,29 @@ export class Scheduler {
    * @param processId recebe o identificador do processo
    * @returns o objeto Processo
    */
-  public getProcess(processId: string) {
-    for (let process of this.allProcess) {
-      if (process.getProcessId() == processId) {
-        return process
-      }
+  public getProcess(processId: string): Process | undefined {
+    const process = this.processList.find(
+      process => process.getId() === processId
+    )
+
+    if (!process) {
+      console.error(`getProcess: Processo com ID ${processId} nao existe`)
     }
-    console.error(`getProcess: Processo com ID ${processId} nao existe`)
-    return
+
+    return process
   }
 
   /**
-   * createEntitySet(name: string, mode: Mode, maxPossibleSize: number)
+   * createEntitySet(entitySet: EntitySet)
    * @param name possui o nome da entidade
    * @param mode seleciona o modo utilizado
    * @param maxPossibleSize passa o tamanho máximo da entity set
-   * @returns o id do EntitySet
+   * @returns o EntitySet
    */
-  public createEntitySet(name: string, mode: Mode, maxPossibleSize: number) {
-    return 'id'
+  public createEntitySet(entitySet: EntitySet): EntitySet {
+    entitySet.setId(uuid())
+    this.entitySetList.push(entitySet)
+    return entitySet
   }
 
   /**
@@ -193,7 +254,15 @@ export class Scheduler {
    * @returns o EntitySet
    */
   public getEntitySet(id: string) {
-    return EntitySet
+    const entitySet = this.entitySetList.find(
+      entitySet => entitySet.getId() === id
+    )
+
+    if (!entitySet) {
+      console.error(`getEntitySet: entitySet com ID ${id} nao existe`)
+    }
+
+    return entitySet
   }
 
   // ---------- random variates ----------
@@ -237,7 +306,7 @@ export class Scheduler {
    * @returns quantidade de entidades criadas até o momento
    */
   public getEntityTotalQuantity() {
-    return 0
+    return this.entityList.length
   }
 
   /**
@@ -246,7 +315,7 @@ export class Scheduler {
    * @returns quantidade de entidades criadas até o momento com o nome informado
    */
   public getEntityTotalQuantityByName(name: string) {
-    return 0
+    return this.entityList.filter(entity => entity.name === name).length
   }
 
   /**
@@ -254,7 +323,12 @@ export class Scheduler {
    * @returns tempo médio que as entidades permanecem no modelo (desde sua criação até sua destruição)
    */
   public averageTimeInModel() {
-    return 0
+    let total = 0
+    for (const entity of this.destroyedEntities) {
+      total += entity.destroyedTime - entity.creationTime
+    }
+
+    return total / this.destroyedEntities.length
   }
 
   /**
@@ -262,6 +336,6 @@ export class Scheduler {
    * @returns número máximo de entidades presentes no modelo até o momento
    */
   public maxEntitiesPresent() {
-    return 0
+    return this.maxActiveEntities
   }
 }

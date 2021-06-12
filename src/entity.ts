@@ -4,16 +4,26 @@ export class Entity {
   id: string | null
   name: string
   creationTime: number
+  destroyedTime: number
   priority: number // -1 sem prioridade, 0 + alta até 255 + baixa
   petriNet: any // incluir a rede de petri
   sets: EntitySet[] // ids de sets
 
-  constructor({ name, petriNet }: { name: string; petriNet?: any }) {
+  constructor({
+    name,
+    priority,
+    petriNet,
+  }: {
+    name: string
+    priority?: number
+    petriNet?: any
+  }) {
     this.id = null
     this.name = name
-    this.creationTime = 0
-    this.priority = -1 // set no priority as default
+    this.priority = priority || -1 // set no priority as default
     this.petriNet = petriNet
+    this.creationTime = 0
+    this.destroyedTime = 0
     this.sets = []
   }
 
@@ -80,6 +90,14 @@ export class Entity {
    */
   public setCreationTime(time: number) {
     this.creationTime = time
+  }
+
+  /**
+   * setDestroyedTime()
+   * @param time - Tempo de criação
+   */
+  public setDestroyedTime(time: number) {
+    this.destroyedTime = time
   }
 
   /**

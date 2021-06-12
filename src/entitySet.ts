@@ -44,6 +44,14 @@ export class EntitySet {
   }
 
   /**
+   * getId()
+   * @returns EntitySet id
+   */
+  public getId() {
+    return this.id
+  }
+
+  /**
    * getMode()
    * @returns Modo da fila EntitySet
    */
@@ -57,6 +65,14 @@ export class EntitySet {
    */
   public setMode(mode: Mode) {
     this.mode = mode
+  }
+
+  /**
+   * setId()
+   * @param id - Id da EntitySet
+   */
+  public setId(id: string) {
+    this.id = id
   }
 
   /**

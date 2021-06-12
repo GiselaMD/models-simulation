@@ -1,33 +1,55 @@
-import { uuid } from 'uuidv4'
-
 export class Resource {
+  id: string | null
   name: string
-  resourceId: string
-  resourceQuantity: number
+  quantity: number
+  used: number
 
   constructor(name: string, quantity: number) {
+    this.id = null
     this.name = name
-    this.resourceQuantity = quantity
-    this.resourceId = uuid()
+    this.quantity = quantity
+    this.used = 0
+  }
+
+  /**
+   * getId()
+   * @returns Resource id
+   */
+  public getId() {
+    return this.id
+  }
+
+  /**
+   * setId()
+   * @param id - Id do resource
+   */
+  public setId(id: string): void {
+    this.id = id
   }
 
   /**
    * allocate()
    * @param quantity de recursos na fila
-   * @returns a condição se o recurso foi alocado ou não
+   * @returns se conseguiu alocar ou não
    */
   public allocate(quantity: number) {
-    // TODO: Validar a alocação de recurso. Olhar para o processo?
+    if (quantity <= this.quantity - this.used) {
+      this.used += quantity
+      return true
+    }
     return false
   }
 
   /**
    * release()
    * @param quantity de recursos na fila
-   * @returns retira os recursos da fila
+   * @returns se conseguiu liberar ou não
    */
   public release(quantity: number) {
-    // TODO: Tirar o recurso da fila de recursos.
+    if (quantity > this.quantity - this.used) {
+      this.used -= quantity
+      return true
+    }
     return false
   }
 
@@ -35,7 +57,8 @@ export class Resource {
    * allocationRate()
    * @returns retorna o percentual do tempo (em relação ao tempo total simulado) alocado para o recurso
    */
-  public allocationRate() {
+  // TODO: validar se o sor quer sobre o tempo total ou o tempo atual, e o que fazer no cenário do simulate()
+  public allocationRate(time: number) {
     const allocationRate: number = 0.0
     // TODO: Aloca um tempo em double para o percentual. 0.10 == 10% ?
     return allocationRate
