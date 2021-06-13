@@ -5,6 +5,7 @@ import { Resource } from './resource'
 import { CachierHandler } from './Restaurant/cachierHandler'
 import { ClientHandler } from './Restaurant/clientHandler'
 import { KitchenHandler } from './Restaurant/kitchenHandler'
+import { WaiterOrderHandler } from './Restaurant/waiterOrderHandler'
 import { Scheduler } from './scheduler'
 
 const scheduler = new Scheduler()
@@ -113,6 +114,10 @@ const processoCozinha = scheduler.createProcess(
     filaPedidoEsperandoEntraga,
     cozinheiros
   )
+)
+
+const processoEntregaGarcom = scheduler.createProcess(
+  new WaiterOrderHandler('Garcom', 0, filaPedidoEsperandoEntraga, garcom)
 )
 
 //cachierHandler cx1
