@@ -1,5 +1,3 @@
-import { Entity } from 'src/entity'
-import { EntitySet } from 'src/entitySet'
 import { Process } from 'src/process'
 
 export class ClientGenerator extends Process {
