@@ -4,24 +4,38 @@ import { Process } from 'src/process'
 import { Resource } from 'src/resource'
 
 export class CachierHandler extends Process {
-  //timeLimit: number
-  cliente: Entity // Validar se vai precisar
   filaDeClientesNoCaixa: EntitySet
-  atendente: Resource
+  filaPedidoCozinha: EntitySet
+  filaRoteiaClientes: EntitySet
+  atendenteCaixa: Resource
 
-  constructor(name: string, duration: number, fila: EntitySet) {
+  constructor(
+    name: string,
+    duration: number,
+    filaCx: EntitySet,
+    filaCozinha: EntitySet,
+    filaRoteia: EntitySet,
+    atendentes: Resource
+  ) {
     super(name, duration)
-    this.filaDeClientesNoCaixa = fila
-    //this.timeLimit = duration
+    this.filaDeClientesNoCaixa = filaCx
+    this.filaPedidoCozinha = filaCozinha
+    this.filaRoteiaClientes = filaRoteia
+    this.atendenteCaixa = atendentes
   }
 
-  public executeNow() {
+  public executeOnStart() {
     if (!this.filaDeClientesNoCaixa.isEmpty()) {
-      if (ate)
+      if (this.atendenteCaixa.allocate(1)) {
+        // se conseguir alocar um atendente, inicia o atendimento.
+        console.log('inicio atendimento')
+        const client = this.filaDeClientesNoCaixa.remove() as Entity
+        // TODO: Auto-agendar e depois inserir na fila do roteia
+        //this.filaRoteiaClientes.insert(client)
+        //this.filaPedidoCozinha.insert(new Entity({ name: 'Pedido' }))
+        //this.atendenteCaixa.release(1)
+      }
     }
-    
-    //   if (this.filaDeClientesNoCaixa.insert(new Entity({ nam
-    // public generateTimeNextExecution() {
-    //   return scheduler.uniform(1, 10)
   }
+  public executeOnEnd() {}
 }

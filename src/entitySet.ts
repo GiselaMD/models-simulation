@@ -116,6 +116,8 @@ export class EntitySet {
     // duration = Date.now - creation
     const entityTime = this.setTime[entityRemoved.id]
     entityTime.duration = Date.now() - entityTime.creation
+
+    return entityRemoved
   }
 
   /**
