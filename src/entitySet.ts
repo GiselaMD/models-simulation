@@ -60,6 +60,14 @@ export class EntitySet {
   }
 
   /**
+   * getEntitySet()
+   * @returns fila EntitySet
+   */
+  public getEntitySet() {
+    return this.set
+  }
+
+  /**
    * setMode()
    * @returns define o modo da fila EntitySet
    */

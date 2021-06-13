@@ -4,7 +4,10 @@ import { Process } from './process'
 import { Resource } from './resource'
 import { CachierHandler } from './Restaurant/cachierHandler'
 import { ClientHandler } from './Restaurant/clientHandler'
+import { ClientRouterHandler } from './Restaurant/clientRouterHandler'
 import { KitchenHandler } from './Restaurant/kitchenHandler'
+import { QueueTableHandler } from './Restaurant/queueTableHandler'
+import { QueueWaitTable } from './Restaurant/queueWaitTable'
 import { WaiterOrderHandler } from './Restaurant/waiterOrderHandler'
 import { Scheduler } from './scheduler'
 
@@ -15,10 +18,10 @@ const scheduler = new Scheduler()
 const atendenteCx1 = scheduler.createResource(new Resource('atendenteCx1', 1))
 const atendenteCx2 = scheduler.createResource(new Resource('atendenteCx2', 1))
 const cozinheiros = scheduler.createResource(new Resource('cozinheiros', 5))
-const garcom = scheduler.createResource(new Resource('garcom', 5))
-scheduler.createResource(new Resource('bancosBalcao', 10))
-scheduler.createResource(new Resource('mesas2', 10))
-scheduler.createResource(new Resource('mesas4', 10))
+const garcons = scheduler.createResource(new Resource('garcom', 5))
+const bancosLivres = scheduler.createResource(new Resource('bancosBalcao', 10))
+const mesas2Livres = scheduler.createResource(new Resource('mesas2', 10))
+const mesas4Livres = scheduler.createResource(new Resource('mesas4', 10))
 
 // ------------------------------ Conjuntos de entidades do sistema ------------------------------
 
@@ -37,7 +40,7 @@ const filaRoteia = scheduler.createEntitySet(
 const filaCozinha = scheduler.createEntitySet(
   new EntitySet('cozinha', 'FIFO' as Mode, 0)
 )
-const filaPedidoEsperandoEntraga = scheduler.createEntitySet(
+const filaPedidoEsperandoEntrega = scheduler.createEntitySet(
   new EntitySet('pedidoEsperandoEntrega', 'FIFO' as Mode, 100)
 )
 scheduler.createEntitySet(
@@ -54,24 +57,46 @@ scheduler.createEntitySet(
 scheduler.createEntitySet(new EntitySet('noBanheiro', 'FIFO' as Mode, 100))
 
 // Bancos balcao
-scheduler.createEntitySet(new EntitySet('filaBalcao', 'FIFO' as Mode, 100))
-scheduler.createEntitySet(new EntitySet('filaLimpaBalcao', 'FIFO' as Mode, 100))
-scheduler.createEntitySet(
+const filaClientesBalcao = scheduler.createEntitySet(
+  new EntitySet('filaBalcao', 'FIFO' as Mode, 100)
+)
+const filaGarcomLimpaBalcao = scheduler.createEntitySet(
+  new EntitySet('filaLimpaBalcao', 'FIFO' as Mode, 100)
+)
+const filaEsperandoPedidoNoBalcao = scheduler.createEntitySet(
   new EntitySet('esperandoNoBalcao', 'FIFO' as Mode, 100)
 )
-scheduler.createEntitySet(new EntitySet('comendoBalcao', 'FIFO' as Mode, 100))
+const filaComendoNoBalcao = scheduler.createEntitySet(
+  new EntitySet('comendoBalcao', 'FIFO' as Mode, 100)
+)
 
 // Mesas de 2 lugares
-scheduler.createEntitySet(new EntitySet('filaM2', 'FIFO' as Mode, 100))
-scheduler.createEntitySet(new EntitySet('filaLimpaM2', 'FIFO' as Mode, 100))
-scheduler.createEntitySet(new EntitySet('esperandoM2', 'FIFO' as Mode, 100))
-scheduler.createEntitySet(new EntitySet('comendoM2', 'FIFO' as Mode, 100))
+const filaClientesNaMesa2 = scheduler.createEntitySet(
+  new EntitySet('filaM2', 'FIFO' as Mode, 100)
+)
+const filaGarcomLimpaMesa2 = scheduler.createEntitySet(
+  new EntitySet('filaLimpaM2', 'FIFO' as Mode, 100)
+)
+const filaEsperandoPedidoNaMesa2 = scheduler.createEntitySet(
+  new EntitySet('esperandoM2', 'FIFO' as Mode, 100)
+)
+const filaComendoMesa2 = scheduler.createEntitySet(
+  new EntitySet('comendoM2', 'FIFO' as Mode, 100)
+)
 
 // Mesas de 4 lugares
-scheduler.createEntitySet(new EntitySet('filaM4', 'FIFO' as Mode, 100))
-scheduler.createEntitySet(new EntitySet('filaLimpaM4', 'FIFO' as Mode, 100))
-scheduler.createEntitySet(new EntitySet('esperandoM4', 'FIFO' as Mode, 100))
-scheduler.createEntitySet(new EntitySet('comendoM4', 'FIFO' as Mode, 100))
+const filaClientesNaMesa4 = scheduler.createEntitySet(
+  new EntitySet('filaM4', 'FIFO' as Mode, 100)
+)
+const filaGarcomLimpaMesa4 = scheduler.createEntitySet(
+  new EntitySet('filaLimpaM4', 'FIFO' as Mode, 100)
+)
+const filaEsperandoPedidoNaMesa4 = scheduler.createEntitySet(
+  new EntitySet('esperandoM4', 'FIFO' as Mode, 100)
+)
+const filaComendoMesa4 = scheduler.createEntitySet(
+  new EntitySet('comendoM4', 'FIFO' as Mode, 100)
+)
 
 // ------------------------------ Gerenciando os processos do sistema ------------------------------
 
@@ -111,46 +136,123 @@ const processoCozinha = scheduler.createProcess(
     'ProcessoCozinha',
     0,
     filaCozinha,
-    filaPedidoEsperandoEntraga,
+    filaPedidoEsperandoEntrega,
     cozinheiros
   )
 )
 
 const processoEntregaGarcom = scheduler.createProcess(
-  new WaiterOrderHandler('Garcom', 0, filaPedidoEsperandoEntraga, garcom)
+  new WaiterOrderHandler(
+    'ProcessoGarcom',
+    0,
+    filaPedidoEsperandoEntrega,
+    garcons
+  )
 )
 
-//cachierHandler cx1
-//cachierHandler cx2
+const processoRoteia = scheduler.createProcess(
+  new ClientRouterHandler(
+    'ProcessoRoteia',
+    0,
+    filaRoteia,
+    filaClientesBalcao,
+    filaClientesNaMesa2,
+    filaClientesNaMesa4
+  )
+)
 
-// ##### Bancos balcao #####
-// TODO: Vincular com resource(bancosBalcao), cliente passou, descontou bancosBalcao
-scheduler.createEntitySet(new EntitySet('filaBalcao', 'FIFO' as Mode, 100))
+const processoFilaBalcao = scheduler.createProcess(
+  new QueueTableHandler(
+    'ProcessoFilaBalcao',
+    0,
+    filaClientesBalcao,
+    filaGarcomLimpaBalcao,
+    bancosLivres
+  )
+)
 
-//TODO: filaLImpaBalcao
+const processoFilaMesa2 = scheduler.createProcess(
+  new QueueTableHandler(
+    'ProcessoFilaMesa2',
+    0,
+    filaClientesNaMesa2,
+    filaGarcomLimpaMesa2,
+    mesas2Livres
+  )
+)
 
-const comendoBalcao = scheduler.createProcess(new Process('comendoBalcao', 0))
-scheduler.startProcessIn(comendoBalcao, scheduler.uniform(1, 10))
+const processoFilaMesa4 = scheduler.createProcess(
+  new QueueTableHandler(
+    'processoFilaMesa4',
+    0,
+    filaClientesNaMesa4,
+    filaGarcomLimpaMesa4,
+    mesas4Livres
+  )
+)
 
-//? Processo para liberar banco ou na saida de comendoBalcao já libera o banco
+const processoLimpaBalcao = scheduler.createProcess(
+  new QueueTableHandler(
+    'processoLimpaBalcao',
+    0,
+    filaGarcomLimpaBalcao,
+    filaEsperandoPedidoNoBalcao,
+    garcons
+  )
+)
 
-// ##### Mesas2 #####
-// TODO: Vincular com resource(mesas2), cliente passou, descontou mesas2
+const processoLimpaMesa2 = scheduler.createProcess(
+  new QueueTableHandler(
+    'processoLimpaMesa2',
+    0,
+    filaGarcomLimpaMesa2,
+    filaEsperandoPedidoNaMesa2,
+    garcons
+  )
+)
 
-//TODO: filaLimpaM2
-const comendoM2 = scheduler.createProcess(new Process('comendoM2', 0))
-scheduler.startProcessIn(comendoM2, scheduler.uniform(1, 10))
+const processoLimpaMesa4 = scheduler.createProcess(
+  new QueueTableHandler(
+    'processoLimpaMesa4',
+    0,
+    filaGarcomLimpaMesa4,
+    filaEsperandoPedidoNaMesa4,
+    garcons
+  )
+)
 
-//? Processo para liberar mesa ou na saida de comendoM2 já libera a mesa
+const processoEsperandoPedidoNoBalcao = scheduler.createProcess(
+  new QueueWaitTable(
+    'processoEsperandoPedidoNoBalcao',
+    0,
+    filaEsperandoPedidoNoBalcao,
+    filaPedidoEsperandoEntrega,
+    garcons,
+    bancosLivres
+  )
+)
 
-// ##### Mesas4 #####
-// TODO: Vincular com resource(mesas4), cliente passou, descontou mesas4
+const processoEsperandoPedidoNaMesa2 = scheduler.createProcess(
+  new QueueWaitTable(
+    'processoEsperandoPedidoNaMesa2',
+    0,
+    filaEsperandoPedidoNaMesa2,
+    filaPedidoEsperandoEntrega,
+    garcons,
+    mesas2Livres
+  )
+)
 
-//TODO: filaLimpaM4
-const comendoM4 = scheduler.createProcess(new Process('comendoM4', 0))
-scheduler.startProcessIn(comendoM4, scheduler.uniform(1, 10))
-
-//? Processo para liberar mesa ou na saida de comendoM4 já libera a mesa
+const processoEsperandoPedidoNaMesa4 = scheduler.createProcess(
+  new QueueWaitTable(
+    'processoEsperandoPedidoNaMesa4',
+    0,
+    filaEsperandoPedidoNaMesa4,
+    filaPedidoEsperandoEntrega,
+    garcons,
+    mesas4Livres
+  )
+)
 
 // ---------- Simulando o sistema ----------
 

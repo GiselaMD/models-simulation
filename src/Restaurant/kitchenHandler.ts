@@ -33,5 +33,4 @@ export class KitchenHandler extends Process {
       }
     }
   }
-  public executeOnEnd() {}
 }

@@ -36,6 +36,14 @@ export class Entity {
   }
 
   /**
+   * getName()
+   * @returns Entity name
+   */
+  public getName() {
+    return this.name
+  }
+
+  /**
    * getPriority()
    * @returns Entity priority
    */

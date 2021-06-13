@@ -2,6 +2,7 @@ import { Entity } from 'src/entity'
 import { EntitySet } from 'src/entitySet'
 import { Process } from 'src/process'
 import { Resource } from 'src/resource'
+import { Order } from './order'
 
 export class CachierHandler extends Process {
   filaDeClientesNoCaixa: EntitySet
@@ -29,13 +30,14 @@ export class CachierHandler extends Process {
       if (this.atendenteCaixa.allocate(1)) {
         // se conseguir alocar um atendente, inicia o atendimento.
         console.log('inicio atendimento')
-        const client = this.filaDeClientesNoCaixa.remove() as Entity
+        const cliente = this.filaDeClientesNoCaixa.remove() as Entity
         // TODO: Auto-agendar e depois inserir na fila do roteia
         //this.filaRoteiaClientes.insert(client)
-        //this.filaPedidoCozinha.insert(new Entity({ name: 'Pedido' }))
+        this.filaPedidoCozinha.insert(
+          new Order('pedido', cliente.getId() as string)
+        )
         //this.atendenteCaixa.release(1)
       }
     }
   }
-  public executeOnEnd() {}
 }
