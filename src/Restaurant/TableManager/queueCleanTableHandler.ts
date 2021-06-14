@@ -2,6 +2,7 @@ import { Entity } from 'src/entity'
 import { EntitySet } from 'src/entitySet'
 import { Process } from 'src/process'
 import { Resource } from 'src/resource'
+import { Scheduler } from 'src/scheduler'
 
 export class QueueCleanTableHandler extends Process {
   filaGarcomLimpaMesa: EntitySet

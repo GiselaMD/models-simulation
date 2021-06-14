@@ -1,7 +1,7 @@
 import { EntitySet } from 'src/entitySet'
 import { Process } from 'src/process'
 import { Resource } from 'src/resource'
-import { Order } from './order'
+import { Order } from '../KitchenManager/order'
 
 export class QueueWaitTable extends Process {
   clientesEsperandoMesa: EntitySet

@@ -1,15 +1,13 @@
-import { Entity } from './entity'
 import { EntitySet, Mode } from './entitySet'
-import { Process } from './process'
 import { Resource } from './resource'
-import { CachierHandler } from './Restaurant/cachierHandler'
-import { ClientHandler } from './Restaurant/clientHandler'
-import { ClientRouterHandler } from './Restaurant/clientRouterHandler'
-import { KitchenHandler } from './Restaurant/kitchenHandler'
-import { QueueTableHandler } from './Restaurant/queueTableHandler'
-import { QueueWaitTable } from './Restaurant/queueWaitTable'
-import { WaiterOrderHandler } from './Restaurant/waiterOrderHandler'
+import { CachierHandler } from './Restaurant/CachierManager/cachierHandler'
+import { ClientRouterHandler } from './Restaurant/TableManager/clientRouterHandler'
+import { KitchenHandler } from './Restaurant/KitchenManager/kitchenHandler'
+import { WaiterOrderHandler } from './Restaurant/KitchenManager/waiterOrderHandler'
 import { Scheduler } from './scheduler'
+import { ClientHandler } from './Restaurant/CachierManager/clientHandler'
+import { QueueTableHandler } from './Restaurant/TableManager/queueTableHandler'
+import { QueueWaitTable } from './Restaurant/TableManager/queueWaitTable'
 
 const scheduler = new Scheduler()
 
@@ -255,6 +253,10 @@ const processoEsperandoPedidoNaMesa4 = scheduler.createProcess(
 )
 
 // ---------- Simulando o sistema ----------
+
+//const redePetri = new RedePetri(){
+// Recebe o arquivo específico para não criar nada na mão.
+//}
 
 // Agendar todos os processos
 //scheduler.scheduleNow(processoCliente)
