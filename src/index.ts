@@ -8,35 +8,61 @@ import { Scheduler } from './scheduler'
 import { ClientHandler } from './Restaurant/CachierManager/clientHandler'
 import { QueueTableHandler } from './Restaurant/TableManager/queueTableHandler'
 import { QueueWaitTable } from './Restaurant/TableManager/queueWaitTable'
+import { WaitCachierHandler } from './Restaurant/CachierManager/waitCachierHandler'
+import { WaitKitchenHandler } from './Restaurant/KitchenManager/waitKitchenHandler'
 
 const scheduler = new Scheduler()
 
 // ------------------------------ Recursos do sistema ------------------------------
 
-const atendenteCx1 = scheduler.createResource(new Resource('atendenteCx1', 1))
-const atendenteCx2 = scheduler.createResource(new Resource('atendenteCx2', 1))
-const cozinheiros = scheduler.createResource(new Resource('cozinheiros', 5))
-const garcons = scheduler.createResource(new Resource('garcom', 5))
-const bancosLivres = scheduler.createResource(new Resource('bancosBalcao', 10))
-const mesas2Livres = scheduler.createResource(new Resource('mesas2', 10))
-const mesas4Livres = scheduler.createResource(new Resource('mesas4', 10))
+const atendenteCx1 = scheduler.createResource(
+  new Resource('atendenteCx1', 1, () => scheduler.getTime())
+)
+const atendenteCx2 = scheduler.createResource(
+  new Resource('atendenteCx2', 1, () => scheduler.getTime())
+)
+const cozinheiros = scheduler.createResource(
+  new Resource('cozinheiros', 5, () => scheduler.getTime())
+)
+const garcons = scheduler.createResource(
+  new Resource('garcom', 5, () => scheduler.getTime())
+)
+//TODO: Garcom como Entity, onde os processos receberiam os callbacks.
+const bancosLivres = scheduler.createResource(
+  new Resource('bancosBalcao', 10, () => scheduler.getTime())
+)
+const mesas2Livres = scheduler.createResource(
+  new Resource('mesas2', 10, () => scheduler.getTime())
+)
+const mesas4Livres = scheduler.createResource(
+  new Resource('mesas4', 10, () => scheduler.getTime())
+)
 
 // ------------------------------ Conjuntos de entidades do sistema ------------------------------
 
 // Caixa
-const filaCaixa1 = scheduler.createEntitySet(
+const filaDeClientesNoCaixa1 = scheduler.createEntitySet(
   new EntitySet('cx1', 'FIFO' as Mode, 0)
 )
-const filaCaixa2 = scheduler.createEntitySet(
+const filaDeClienteSendoAtendidosNoCaixa1 = scheduler.createEntitySet(
+  new EntitySet('filaDeClienteSendoAtendidosNoCaixa1', 'FIFO' as Mode, 0)
+)
+const filaDeClientesNoCaixa2 = scheduler.createEntitySet(
   new EntitySet('cx2', 'FIFO' as Mode, 0)
+)
+const filaDeClienteSendoAtendidosNoCaixa2 = scheduler.createEntitySet(
+  new EntitySet('filaDeClienteSendoAtendidosNoCaixa2', 'FIFO' as Mode, 0)
 )
 const filaRoteia = scheduler.createEntitySet(
   new EntitySet('filaRoteia', 'FIFO' as Mode, 0)
 )
 
 // Cozinha
-const filaCozinha = scheduler.createEntitySet(
-  new EntitySet('cozinha', 'FIFO' as Mode, 0)
+const filaPedidoEntrandoCozinha = scheduler.createEntitySet(
+  new EntitySet('cozinha', 'FIFO' as Mode, 100)
+)
+const filaPedidoSendoPreparado = scheduler.createEntitySet(
+  new EntitySet('pedidoEsperandoEntrega', 'FIFO' as Mode, 100)
 )
 const filaPedidoEsperandoEntrega = scheduler.createEntitySet(
   new EntitySet('pedidoEsperandoEntrega', 'FIFO' as Mode, 100)
@@ -100,49 +126,90 @@ const filaComendoMesa4 = scheduler.createEntitySet(
 
 // Cria o processo de um cliente (clientes entrando no restaurante e sendo levado a um caixa especifico)
 const processoCliente = scheduler.createProcess(
-  new ClientHandler('ProcessoCliente', 0, filaCaixa1, filaCaixa2)
+  new ClientHandler(
+    'ProcessoCliente',
+    () => scheduler.uniform(1, 4),
+    filaDeClientesNoCaixa1,
+    filaDeClientesNoCaixa2
+  )
 )
 // TODO: Agenda processo para executar daqui tempo uniform, continuar agendando
-scheduler.startProcessIn(processoCliente, scheduler.uniform(1, 10))
+// @vitor
+scheduler.startProcessNow(processoCliente)
 //scheduler.startProcessIn(processoCliente, 'uniforme', [1, 10])
 
+// Passar entidade para dentro do processo. O processo precisa acessar a rede de Petri.
+
 // Implementar atendimento no caixas.
-const processoAtendeCaixa1 = scheduler.createProcess(
+const processoEsperaAtendimentoCaixa1 = scheduler.createProcess(
   new CachierHandler(
-    'ProcessoAtendeCaixa1',
-    0,
-    filaCaixa1,
-    filaCozinha,
+    'ProcessoEsperaAtendimentoCaixa1',
+    () => scheduler.uniform(1, 1),
+    filaDeClientesNoCaixa1,
+    filaPedidoEntrandoCozinha,
     filaRoteia,
     atendenteCx1
   )
 )
-const processoAtendeCaixa2 = scheduler.createProcess(
+
+const processoAtendendoCaixa1 = scheduler.createProcess(
+  new WaitCachierHandler(
+    'ProcessoAtendedendoCaixa1',
+    () => scheduler.uniform(1, 4),
+    filaDeClienteSendoAtendidosNoCaixa1,
+    filaPedidoEntrandoCozinha,
+    atendenteCx1
+  )
+)
+
+const processoEsperaAtendimentoCaixa2 = scheduler.createProcess(
   new CachierHandler(
-    'ProcessoAtendeCaixa2',
-    0,
-    filaCaixa2,
-    filaCozinha,
+    'ProcessoEsperaAtendimentoCaixa2',
+    () => scheduler.uniform(1, 1),
+    filaDeClientesNoCaixa2,
+    filaPedidoEntrandoCozinha,
     filaRoteia,
     atendenteCx2
   )
 )
 
+const processoAtendendoCaixa2 = scheduler.createProcess(
+  new WaitCachierHandler(
+    'ProcessoAtendedendoCaixa2',
+    () => scheduler.uniform(1, 4),
+    filaDeClienteSendoAtendidosNoCaixa2,
+    filaPedidoEntrandoCozinha,
+    atendenteCx2
+  )
+)
+
 // Fluxo da Cozinha
-const processoCozinha = scheduler.createProcess(
+const processoEsperaCozinha = scheduler.createProcess(
   new KitchenHandler(
     'ProcessoCozinha',
-    0,
-    filaCozinha,
+    () => scheduler.uniform(1, 1),
+    filaPedidoEntrandoCozinha,
+    filaPedidoSendoPreparado,
+    cozinheiros
+  )
+)
+
+// Fluxo da Cozinha
+const processoPedidoSendoPreparado = scheduler.createProcess(
+  new WaitKitchenHandler(
+    'ProcessoPedidoSendoPreparado',
+    () => scheduler.uniform(1, 4),
+    filaPedidoSendoPreparado,
     filaPedidoEsperandoEntrega,
     cozinheiros
   )
 )
 
+//TODO: Continuar aqui os processos wait.
 const processoEntregaGarcom = scheduler.createProcess(
   new WaiterOrderHandler(
     'ProcessoGarcom',
-    0,
+    () => scheduler.uniform(1, 4),
     filaPedidoEsperandoEntrega,
     garcons
   )
@@ -151,7 +218,7 @@ const processoEntregaGarcom = scheduler.createProcess(
 const processoRoteia = scheduler.createProcess(
   new ClientRouterHandler(
     'ProcessoRoteia',
-    0,
+    () => scheduler.uniform(1, 4),
     filaRoteia,
     filaClientesBalcao,
     filaClientesNaMesa2,
@@ -162,7 +229,7 @@ const processoRoteia = scheduler.createProcess(
 const processoFilaBalcao = scheduler.createProcess(
   new QueueTableHandler(
     'ProcessoFilaBalcao',
-    0,
+    () => scheduler.uniform(1, 4),
     filaClientesBalcao,
     filaGarcomLimpaBalcao,
     bancosLivres
@@ -172,7 +239,7 @@ const processoFilaBalcao = scheduler.createProcess(
 const processoFilaMesa2 = scheduler.createProcess(
   new QueueTableHandler(
     'ProcessoFilaMesa2',
-    0,
+    () => scheduler.uniform(1, 4),
     filaClientesNaMesa2,
     filaGarcomLimpaMesa2,
     mesas2Livres
@@ -182,7 +249,7 @@ const processoFilaMesa2 = scheduler.createProcess(
 const processoFilaMesa4 = scheduler.createProcess(
   new QueueTableHandler(
     'processoFilaMesa4',
-    0,
+    () => scheduler.uniform(1, 4),
     filaClientesNaMesa4,
     filaGarcomLimpaMesa4,
     mesas4Livres
@@ -192,7 +259,7 @@ const processoFilaMesa4 = scheduler.createProcess(
 const processoLimpaBalcao = scheduler.createProcess(
   new QueueTableHandler(
     'processoLimpaBalcao',
-    0,
+    () => scheduler.uniform(1, 4),
     filaGarcomLimpaBalcao,
     filaEsperandoPedidoNoBalcao,
     garcons
@@ -202,7 +269,7 @@ const processoLimpaBalcao = scheduler.createProcess(
 const processoLimpaMesa2 = scheduler.createProcess(
   new QueueTableHandler(
     'processoLimpaMesa2',
-    0,
+    () => scheduler.uniform(1, 4),
     filaGarcomLimpaMesa2,
     filaEsperandoPedidoNaMesa2,
     garcons
@@ -212,7 +279,7 @@ const processoLimpaMesa2 = scheduler.createProcess(
 const processoLimpaMesa4 = scheduler.createProcess(
   new QueueTableHandler(
     'processoLimpaMesa4',
-    0,
+    () => scheduler.uniform(1, 4),
     filaGarcomLimpaMesa4,
     filaEsperandoPedidoNaMesa4,
     garcons
@@ -222,7 +289,7 @@ const processoLimpaMesa4 = scheduler.createProcess(
 const processoEsperandoPedidoNoBalcao = scheduler.createProcess(
   new QueueWaitTable(
     'processoEsperandoPedidoNoBalcao',
-    0,
+    () => scheduler.uniform(1, 4),
     filaEsperandoPedidoNoBalcao,
     filaPedidoEsperandoEntrega,
     garcons,
@@ -233,18 +300,18 @@ const processoEsperandoPedidoNoBalcao = scheduler.createProcess(
 const processoEsperandoPedidoNaMesa2 = scheduler.createProcess(
   new QueueWaitTable(
     'processoEsperandoPedidoNaMesa2',
-    0,
+    () => scheduler.uniform(1, 4),
     filaEsperandoPedidoNaMesa2,
     filaPedidoEsperandoEntrega,
     garcons,
     mesas2Livres
   )
 )
-
+// TODO: Passar o duration para dentro de cada processo.
 const processoEsperandoPedidoNaMesa4 = scheduler.createProcess(
   new QueueWaitTable(
     'processoEsperandoPedidoNaMesa4',
-    0,
+    () => scheduler.uniform(1, 4),
     filaEsperandoPedidoNaMesa4,
     filaPedidoEsperandoEntrega,
     garcons,
@@ -257,9 +324,6 @@ const processoEsperandoPedidoNaMesa4 = scheduler.createProcess(
 //const redePetri = new RedePetri(){
 // Recebe o arquivo específico para não criar nada na mão.
 //}
-
-// Agendar todos os processos
-//scheduler.scheduleNow(processoCliente)
 
 // Inicialiar todos os processos
 //scheduler.startProcessNow(abastece)

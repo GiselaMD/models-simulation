@@ -7,18 +7,21 @@ export class QueueTableHandler extends Process {
   clientesEsperandoMesa: EntitySet
   filaEsperandoGarcomLimpar: EntitySet
   mesasLivres: Resource
+  //garcom: Entity
 
   constructor(
     name: string,
-    duration: number,
+    duration: () => number,
     filaEsperaMesa: EntitySet,
     mesasEsperandoGarcomLimpar: EntitySet,
     mesasLivres: Resource // sujas e limpas
+    //garcom: Entity
   ) {
     super(name, duration)
     this.clientesEsperandoMesa = filaEsperaMesa
     this.filaEsperandoGarcomLimpar = mesasEsperandoGarcomLimpar
     this.mesasLivres = mesasLivres
+    //this.garcom = garcom
   }
 
   public executeOnStart() {

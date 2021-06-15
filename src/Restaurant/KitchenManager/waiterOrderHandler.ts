@@ -2,6 +2,7 @@ import { Entity } from 'src/entity'
 import { EntitySet } from 'src/entitySet'
 import { Process } from 'src/process'
 import { Resource } from 'src/resource'
+import { Scheduler } from 'src/scheduler'
 
 export class WaiterOrderHandler extends Process {
   filaPedidoEntrega: EntitySet
@@ -9,7 +10,7 @@ export class WaiterOrderHandler extends Process {
 
   constructor(
     name: string,
-    duration: number,
+    duration: () => number,
     filaDeEntrega: EntitySet,
     garcons: Resource
   ) {

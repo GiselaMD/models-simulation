@@ -1,38 +1,24 @@
-import { EntitySet } from './entitySet'
+//TODO: Create the Waiter to handle the Petri Net.
+// extend entity
+// Parâmetro de rede de Petri
 
-export class Entity {
-  id: string | null
-  name: string
-  creationTime: number
-  destroyedTime: number
-  priority: number // -1 sem prioridade, 0 + alta até 255 + baixa
+import { Entity } from 'src/entity'
+import { EntitySet } from 'src/entitySet'
+
+export class Waiter extends Entity {
   petriNet: any // incluir a rede de petri
   sets: EntitySet[] // ids de sets
 
   constructor({
     name,
-    priority,
     petriNet,
   }: {
     name: string
     priority?: number
     petriNet?: any
   }) {
-    this.id = null
-    this.name = name
-    this.priority = priority || -1 // set no priority as default
-    this.petriNet = petriNet
-    this.creationTime = 0
-    this.destroyedTime = 0
+    super({ name, petriNet })
     this.sets = []
-  }
-
-  /**
-   * getId()
-   * @returns Entity id
-   */
-  public getId() {
-    return this.id
   }
 
   /**
@@ -115,13 +101,5 @@ export class Entity {
    */
   public setPetriNet(petriNet: any) {
     this.petriNet = petriNet
-  }
-
-  /**
-   * getPetriNet()
-   * @returns Rede de petri da Entidade
-   */
-  public getPetriNet() {
-    return this.petriNet
   }
 }

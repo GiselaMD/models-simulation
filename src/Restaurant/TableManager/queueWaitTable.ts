@@ -11,7 +11,7 @@ export class QueueWaitTable extends Process {
 
   constructor(
     name: string,
-    duration: number,
+    duration: () => number,
     filaEsperaMesa: EntitySet,
     filaPedidoEsperandoEntrega: EntitySet,
     garcons: Resource,

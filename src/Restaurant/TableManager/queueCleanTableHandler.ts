@@ -2,7 +2,6 @@ import { Entity } from 'src/entity'
 import { EntitySet } from 'src/entitySet'
 import { Process } from 'src/process'
 import { Resource } from 'src/resource'
-import { Scheduler } from 'src/scheduler'
 
 export class QueueCleanTableHandler extends Process {
   filaGarcomLimpaMesa: EntitySet
@@ -11,7 +10,7 @@ export class QueueCleanTableHandler extends Process {
 
   constructor(
     name: string,
-    duration: number,
+    duration: () => number,
     mesasEsperandoGarcomLimpar: EntitySet,
     filaClientesEsperamMesa: EntitySet,
     garcons: Resource
@@ -28,9 +27,9 @@ export class QueueCleanTableHandler extends Process {
       if (this.garcons.allocate(1)) {
         console.log('Solicitou garçom para limpar a mesa')
         // TODO: Usar o schedule do tempo que o garçom limpa a mesa
-        // this.filaDeClienteEsperandoPedidoNaMesa.insert(
-        //   this.filaGarcomLimpaMesa.remove() as Entity
-        // )
+        this.filaDeClienteEsperandoPedidoNaMesa.insert(
+          this.filaGarcomLimpaMesa.remove() as Entity
+        )
       }
     }
   }

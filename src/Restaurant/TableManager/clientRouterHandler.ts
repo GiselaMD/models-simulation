@@ -10,7 +10,7 @@ export class ClientRouterHandler extends Process {
 
   constructor(
     name: string,
-    duration: number,
+    duration: () => number,
     filaRoteia: EntitySet,
     filaBalcao: EntitySet,
     filaMesa2: EntitySet,

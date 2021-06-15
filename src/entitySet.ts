@@ -220,20 +220,11 @@ export class EntitySet {
     let total = 0
     let max = 0
 
-    // clone object
-    // TODO: validar com o sor se deve considerar o tempo das entidades ativas
-    // const timeValues = JSON.parse(JSON.stringify(Object.values(this.setTime)))
-
-    // se time.duration === 0, então a entidade não foi removida e deve atualizar o duration
-
     const timeValues = Object.values(this.setTime).filter(
       time => time.duration !== 0
     )
 
     for (const time of timeValues) {
-      // if (time.duration === 0) {
-      //   time.duration = Date.now() - time.creation
-      // }
       total += time.duration
 
       if (time.duration > max) {

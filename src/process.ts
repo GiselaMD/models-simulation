@@ -1,10 +1,10 @@
 export class Process {
   name: string
   id: string | null
-  duration: number
+  duration: () => number
   active: boolean
 
-  constructor(name: string, duration: number) {
+  constructor(name: string, duration: () => number) {
     this.id = null
     this.name = name
     this.duration = duration
@@ -53,27 +53,11 @@ export class Process {
     this.active = active
   }
 
-  // /**
-  //  * execute()
-  //  * @returns executa quando for chamado
-  //  */
-  // public execute() {
-  //   this.executeOnStart()
-  //   this.executeNow()
-  //   this.executeOnEnd()
-  // }
-
   /**
    * executeOnStart()
    * @returns faz antes de executar o processo
    */
   public executeOnStart(): void {}
-
-  // /**
-  //  * executeNow()
-  //  * @returns executa no momento atual
-  //  */
-  // public executeNow(): void {}
 
   /**
    * executeOnEnd()

@@ -5,8 +5,12 @@ import { Process } from './process'
 import { Resource } from './resource'
 import { uuid } from 'uuidv4'
 
+type ProcessItem = {
+  process: Process
+  type: string
+}
 interface ProcessSchedule {
-  [key: number]: Process[]
+  [key: number]: ProcessItem[]
 }
 export class Scheduler {
   time: number = 0
@@ -17,6 +21,7 @@ export class Scheduler {
   entitySetList: EntitySet[] = []
   destroyedEntities: Entity[] = []
   maxActiveEntities: number = 0
+  isDebbuger: boolean = false
 
   /**
    * getTime()
@@ -34,12 +39,8 @@ export class Scheduler {
    * @returns Inicializa o processo.
    */
   public startProcessNow(process: Process) {
+    this.isDebbuger && console.log('startProcessNow, com id:', process.getId())
     this.startProcessAt(process, this.time)
-
-    // TODO: mover pro simulate
-    // process.executeOnStart()
-    // this.time += process.duration // clock é o tempo atual mais o tempo decorrido no processo
-    // process.executeOnEnd()
   }
 
   /**
@@ -49,6 +50,10 @@ export class Scheduler {
    * @returns o agendamento do começo do processo daqui a 10 minutos.
    */
   public startProcessIn(process: Process, timeToStart: number) {
+    this.isDebbuger &&
+      console.log(
+        `startProcessIn, com id ${process.getId()} e timeToStart: ${timeToStart}`
+      )
     this.startProcessAt(process, this.time + timeToStart)
   }
 
@@ -59,10 +64,18 @@ export class Scheduler {
    * @returns o agendamento do começo processo em um momento específico
    */
   public startProcessAt(process: Process, absoluteTime: number) {
+    this.isDebbuger &&
+      console.log(
+        `startProcessAt, com id ${process.getId()} e absoluteTime: ${absoluteTime}`
+      )
     this.processSchedule = {
       ...this.processSchedule,
-      [absoluteTime]: [...this.processSchedule[absoluteTime], process],
+      [absoluteTime]: [
+        ...this.processSchedule[absoluteTime],
+        { process, type: 'start' },
+      ],
     }
+    // TODO: remover depois
     console.log(`processSchedule`, this.processSchedule)
   }
 
@@ -85,6 +98,39 @@ export class Scheduler {
     return true
   }
 
+  private executeSimulation() {
+    // Pega o primeiro tempo disponível no modelo
+    const [time] = Object.keys(this.processSchedule).map(parseInt).sort()
+    // Atualiza o tempo do modelo pro tempo atual do processo
+    this.time = time
+
+    const processes = this.processSchedule[time]
+
+    // Varre os processos do tempo "time"
+    while (processes.length > 0) {
+      // Remove o primeiro processo do array
+      const { process, type } = processes.shift() as ProcessItem
+
+      // Valida se é o ínicio ou fim da execução do processo
+      if (type === 'start') {
+        process?.executeOnStart()
+        const duration = process?.duration() || this.time
+
+        const endTime = this.time + duration
+        // Reagenda o fim do processo baseado no tempo de duração dele
+        this.processSchedule[endTime] = [
+          ...this.processSchedule[endTime],
+          { process, type: 'end' },
+        ]
+      } else {
+        process?.executeOnEnd()
+      }
+    }
+    // após processar todos dentro do tempo "time" remove a chave da estrutura
+    // para na próxima iteração pegar os processos do próximo tempo
+    delete this.processSchedule[time]
+  }
+
   /**
    * simulate()
    * executa até esgotar o modelo, isto é, até a engine não ter mais nada para processar
@@ -92,8 +138,7 @@ export class Scheduler {
    */
   public simulate() {
     while (!this.isProcessScheduleEmpty()) {
-      //TODO: init
-      this.time++
+      this.executeSimulation()
     }
   }
 
@@ -103,12 +148,8 @@ export class Scheduler {
    * @returns
    */
   public simulateOneStep() {
-    //TODO:
-    // for (let process of this.processList) {
-    //   if (process.isActive() && process.getNextExecution() == this.getTime()) {
-    //     process.execute()
-    //   }
-    // }
+    this.isDebbuger = true
+    this.simulate()
   }
 
   /**
@@ -117,9 +158,8 @@ export class Scheduler {
    * @returns
    */
   public simulateBy(duration: number) {
-    for (let i = duration; i > 0; i--) {
-      //TODO: init
-      this.time++
+    while (this.time <= duration) {
+      this.executeSimulation()
     }
   }
 
@@ -129,9 +169,8 @@ export class Scheduler {
    * @returns a simulação com o tempo absoluto
    */
   public simulateUntil(absoluteTime: number) {
-    for (let i = this.time; i <= absoluteTime; i++) {
-      //TODO: init
-      this.time++
+    while (this.time <= absoluteTime) {
+      this.executeSimulation()
     }
   }
 
@@ -145,6 +184,10 @@ export class Scheduler {
   public createEntity(entity: Entity): Entity {
     entity.setId(uuid())
     entity.setCreationTime(this.time)
+    this.isDebbuger &&
+      console.log(
+        `createEntity, com id ${entity.getId()} e creationTime ${this.time}`
+      )
     this.entityList.push(entity)
 
     if (this.maxActiveEntities < this.entityList.length) {
@@ -159,6 +202,7 @@ export class Scheduler {
    * @param entity recebe o objeto entidade
    */
   public destroyEntity(id: string) {
+    this.isDebbuger && console.log(`destroyEntity, com id ${id}`)
     const entityIndex = this.entityList.findIndex(entity => entity.id === id)
     const [detroyedEntity] = this.entityList.splice(entityIndex, 1)
     detroyedEntity?.setDestroyedTime(this.time)
@@ -176,6 +220,8 @@ export class Scheduler {
       console.error(`getEntity: entity com ID ${id} nao existe`)
     }
 
+    this.isDebbuger && console.log(`getEntity, com id ${id}`)
+
     return entity
   }
 
@@ -188,6 +234,7 @@ export class Scheduler {
   public createResource(resource: Resource) {
     resource.setId(uuid())
     this.resourceList.push(resource)
+    this.isDebbuger && console.log(`createResource, com id ${resource.getId()}`)
     return resource
   }
 
@@ -203,6 +250,7 @@ export class Scheduler {
       console.error(`getResource: resource com ID ${id} nao existe`)
     }
 
+    this.isDebbuger && console.log(`getResource, com id ${id}`)
     return resource
   }
 
@@ -215,6 +263,7 @@ export class Scheduler {
   public createProcess(process: Process): Process {
     process.setId(uuid())
     this.processList.push(process)
+    this.isDebbuger && console.log(`createProcess, com id ${process.getId()}`)
     return process
   }
 
@@ -232,6 +281,8 @@ export class Scheduler {
       console.error(`getProcess: Processo com ID ${processId} nao existe`)
     }
 
+    this.isDebbuger && console.log(`getProcess, com id ${processId}`)
+
     return process
   }
 
@@ -245,6 +296,8 @@ export class Scheduler {
   public createEntitySet(entitySet: EntitySet): EntitySet {
     entitySet.setId(uuid())
     this.entitySetList.push(entitySet)
+    this.isDebbuger &&
+      console.log(`createEntitySet, com id ${entitySet.getId()}`)
     return entitySet
   }
 
@@ -262,6 +315,8 @@ export class Scheduler {
       console.error(`getEntitySet: entitySet com ID ${id} nao existe`)
     }
 
+    this.isDebbuger && console.log(`getEntitySet, com id ${id}`)
+
     return entitySet
   }
 
@@ -275,7 +330,12 @@ export class Scheduler {
    */
   public uniform(minValue: number, maxValue: number) {
     const rvg = new RandVarGen()
-    return rvg.uniform(minValue, maxValue)
+    const result = rvg.uniform(minValue, maxValue)
+    this.isDebbuger &&
+      console.log(
+        `Calculou uniform com minValue = ${minValue}, maxValue = ${maxValue}, e resultado = ${result}`
+      )
+    return result
   }
 
   /**
@@ -285,7 +345,12 @@ export class Scheduler {
    */
   public exponential(meanValue: number) {
     const rvg = new RandVarGen()
-    return rvg.exponential(meanValue)
+    const result = rvg.exponential(meanValue)
+    this.isDebbuger &&
+      console.log(
+        `Calculou exponencial com meanValue = ${meanValue} e resultado = ${result}`
+      )
+    return result
   }
 
   /**
@@ -296,7 +361,12 @@ export class Scheduler {
    */
   public normal(meanValue: number, stdDeviationValue: number) {
     const rvg = new RandVarGen()
-    return rvg.normal(meanValue, stdDeviationValue)
+    const result = rvg.normal(meanValue, stdDeviationValue)
+    this.isDebbuger &&
+      console.log(
+        `Calculou normal com meanValue = ${meanValue}, stdDeviationValue = ${stdDeviationValue} e resultado = ${result}`
+      )
+    return result
   }
 
   // ---------- coleta de estatísticas ----------
