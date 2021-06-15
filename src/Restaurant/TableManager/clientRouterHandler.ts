@@ -25,19 +25,15 @@ export class ClientRouterHandler extends Process {
 
   public executeOnStart() {
     if (!this.filaRoteiaCliente.isEmpty()) {
-      if (this.filaRoteiaCliente.getEntitySet()[0].getName() == 'cliente1') {
-        // roteia para a mesa 1
-        // TODO: Usar o schedule para o tempo de ir até a mesa
+      const nomeCliente = this.filaRoteiaCliente.getEntitySet()[0].getName()
+      if (nomeCliente == 'cliente1') {
+        console.log(nomeCliente + ' indo para mesa')
         this.filaEsperaBalcao.insert(this.filaRoteiaCliente.remove() as Entity)
-      } else if (
-        this.filaRoteiaCliente.getEntitySet()[0].getName() == 'cliente2'
-      ) {
-        // roteia para a mesa 2
-        // TODO: Usar o schedule para o tempo de ir até a mesa
+      } else if (nomeCliente == 'cliente2') {
+        console.log(nomeCliente + ' indo para mesa')
         this.filaEsperaMesa2.insert(this.filaRoteiaCliente.remove() as Entity)
       } else {
-        // roteia para a mesa 4
-        // TODO: Usar o schedule para o tempo de ir até a mesa
+        console.log(nomeCliente + ' indo para mesa')
         this.filaEsperaMesa4.insert(this.filaRoteiaCliente.remove() as Entity)
       }
     }

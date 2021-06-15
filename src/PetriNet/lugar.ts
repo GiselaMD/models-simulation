@@ -11,14 +11,12 @@ export class Lugar {
 
   public insereToken(qtdTokens: number) {
     this.tokens += qtdTokens
-    // TODO: remover console.log, usado temporariamente
     console.log(`Adicionado ${qtdTokens} token(s) no ${this.getLabel()}`)
   }
 
   public removeToken(qtdTokens: number) {
     if (this.tokens >= qtdTokens) {
       this.tokens -= qtdTokens
-      // TODO: remover console.log, usado temporariamente
       console.log(`Removido ${qtdTokens} token(s) do ${this.getLabel()}`)
     } else {
       console.log(

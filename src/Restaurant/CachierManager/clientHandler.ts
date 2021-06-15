@@ -14,7 +14,6 @@ export class ClientHandler extends Process {
     filaCx1: EntitySet,
     filaCx2: EntitySet
   ) {
-    // TODO: revisar o duration
     super(name, duration)
     this.filaDeClientesNoCaixa1 = filaCx1
     this.filaDeClientesNoCaixa2 = filaCx2

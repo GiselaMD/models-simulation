@@ -52,12 +52,9 @@ for (let i = 1; i <= qtdTransicoes; i++) {
   transicao && rede.insereCallbackTransicao(transicao, trasicaoDisparada)
 
   for (let entrada of lugaresEntrada) {
-    const ehInibidora = !!lugaresConexaoInibidora.find(
-      (elem) => elem === entrada
-    )
-    const ehReset = !!lugaresConexaoReset.find((elem) => elem === entrada)
+    const ehInibidora = !!lugaresConexaoInibidora.find(elem => elem === entrada)
+    const ehReset = !!lugaresConexaoReset.find(elem => elem === entrada)
 
-    // TODO: parar de executar o resto dos prompts se der erro
     if (Number.isNaN(Number(entrada))) {
       console.log('As entradas devem ser fornecidas como números inteiros')
     }

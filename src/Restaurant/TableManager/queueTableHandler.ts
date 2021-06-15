@@ -27,8 +27,8 @@ export class QueueTableHandler extends Process {
   public executeOnStart() {
     if (!this.clientesEsperandoMesa.isEmpty()) {
       if (this.mesasLivres.allocate(1)) {
-        // TODO: Usar o schedule para o tempo de ir até a mesa limpa
         console.log('Solicitou mesa para ser limpa')
+        //TODO: Processo de limpeza de mesa.
         this.filaEsperandoGarcomLimpar.insert(
           this.clientesEsperandoMesa.remove() as Entity
         )

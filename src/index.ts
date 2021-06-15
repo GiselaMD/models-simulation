@@ -10,8 +10,20 @@ import { QueueTableHandler } from './Restaurant/TableManager/queueTableHandler'
 import { QueueWaitTable } from './Restaurant/TableManager/queueWaitTable'
 import { WaitCachierHandler } from './Restaurant/CachierManager/waitCachierHandler'
 import { WaitKitchenHandler } from './Restaurant/KitchenManager/waitKitchenHandler'
+import { RedePetri } from './PetriNet/redeDePetri'
+import { run } from './PetriNet/test'
 
+// Cria o Scheduler
 const scheduler = new Scheduler()
+
+// Cria a rede de Petri
+const waiterPetriNet = run(
+  'RedeDePetriBanheiroCerta.pflow'
+) as unknown as RedePetri
+
+//TODO: Acabar a rede de Petri e os processos de Wait do TableManager.
+//TODO: Garcom como Entity, onde os processos receberiam os callbacks.
+//TODO: Colocar todos os startProcessNow de todos os Process
 
 // ------------------------------ Recursos do sistema ------------------------------
 
@@ -27,7 +39,7 @@ const cozinheiros = scheduler.createResource(
 const garcons = scheduler.createResource(
   new Resource('garcom', 5, () => scheduler.getTime())
 )
-//TODO: Garcom como Entity, onde os processos receberiam os callbacks.
+
 const bancosLivres = scheduler.createResource(
   new Resource('bancosBalcao', 10, () => scheduler.getTime())
 )
@@ -133,8 +145,7 @@ const processoCliente = scheduler.createProcess(
     filaDeClientesNoCaixa2
   )
 )
-// TODO: Agenda processo para executar daqui tempo uniform, continuar agendando
-// @vitor
+
 scheduler.startProcessNow(processoCliente)
 //scheduler.startProcessIn(processoCliente, 'uniforme', [1, 10])
 
@@ -205,7 +216,7 @@ const processoPedidoSendoPreparado = scheduler.createProcess(
   )
 )
 
-//TODO: Continuar aqui os processos wait.
+//TODO: Continuar aqui os processos Wait. Rede de Petri do Garcom.
 const processoEntregaGarcom = scheduler.createProcess(
   new WaiterOrderHandler(
     'ProcessoGarcom',
@@ -307,7 +318,7 @@ const processoEsperandoPedidoNaMesa2 = scheduler.createProcess(
     mesas2Livres
   )
 )
-// TODO: Passar o duration para dentro de cada processo.
+
 const processoEsperandoPedidoNaMesa4 = scheduler.createProcess(
   new QueueWaitTable(
     'processoEsperandoPedidoNaMesa4',

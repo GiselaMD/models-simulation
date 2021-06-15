@@ -1,4 +1,4 @@
-//TODO: Create the Waiter to handle the Petri Net.
+//TODO: Criar a Entidade Waiter, por enquanto está toda desatualizada conforme Entity.
 // extend entity
 // Parâmetro de rede de Petri
 
