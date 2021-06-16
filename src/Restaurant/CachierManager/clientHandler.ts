@@ -1,35 +1,37 @@
+import { filaDeClientesNoCaixa1, filaDeClientesNoCaixa2, scheduler } from 'src'
 import { Entity } from 'src/entity'
-import { EntitySet } from 'src/entitySet'
 import { Process } from 'src/process'
-import { Scheduler } from 'src/scheduler'
+import { CachierHandler } from './cachierHandler'
 
 export class ClientHandler extends Process {
-  filaDeClientesNoCaixa1: EntitySet
-  filaDeClientesNoCaixa2: EntitySet
-  scheduler: Scheduler
-
-  constructor(
-    name: string,
-    duration: () => number,
-    filaCx1: EntitySet,
-    filaCx2: EntitySet
-  ) {
+  numCaixaDestino: number = 0
+  constructor(name: string, duration: () => number) {
     super(name, duration)
-    this.filaDeClientesNoCaixa1 = filaCx1
-    this.filaDeClientesNoCaixa2 = filaCx2
-    this.scheduler = new Scheduler()
   }
 
-  public executeOnStart() {
-    const cliente = 'cliente' + this.scheduler.uniform(1, 4)
+  public executeOnEnd() {
+    const cliente = 'cliente' + scheduler.uniform(1, 4)
 
-    if (
-      this.filaDeClientesNoCaixa1.getSize() <
-      this.filaDeClientesNoCaixa2.getSize()
-    ) {
-      this.filaDeClientesNoCaixa1.insert(new Entity({ name: cliente }))
+    if (filaDeClientesNoCaixa1.getSize() < filaDeClientesNoCaixa2.getSize()) {
+      filaDeClientesNoCaixa1.insert(new Entity({ name: cliente }))
+      this.numCaixaDestino = 1
     } else {
-      this.filaDeClientesNoCaixa2.insert(new Entity({ name: cliente }))
+      filaDeClientesNoCaixa2.insert(new Entity({ name: cliente }))
+      this.numCaixaDestino = 2
     }
+
+    // Se auto agenda
+    scheduler.startProcessNow(
+      new ClientHandler('ProcessoCliente', () => scheduler.uniform(1, 4))
+    )
+
+    // Inicia processo do caixa
+    scheduler.startProcessNow(
+      new CachierHandler(
+        'ProcessoEsperaAtendimentoCaixa' + this.numCaixaDestino,
+        () => scheduler.uniform(1, 4),
+        this.numCaixaDestino
+      )
+    )
   }
 }

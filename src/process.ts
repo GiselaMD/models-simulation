@@ -1,3 +1,5 @@
+import { Scheduler } from './scheduler'
+
 export class Process {
   name: string
   id: string | null
@@ -57,7 +59,9 @@ export class Process {
    * executeOnStart()
    * @returns faz antes de executar o processo
    */
-  public executeOnStart(): void {}
+  public executeOnStart(): boolean {
+    return true
+  }
 
   /**
    * executeOnEnd()

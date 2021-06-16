@@ -113,15 +113,24 @@ export class Scheduler {
 
       // Valida se é o ínicio ou fim da execução do processo
       if (type === 'start') {
-        process?.executeOnStart()
-        const duration = process?.duration() || this.time
+        const continueProcess = process?.executeOnStart()
+        if (continueProcess == true) {
+          const duration = process?.duration() || this.time
 
-        const endTime = this.time + duration
-        // Reagenda o fim do processo baseado no tempo de duração dele
-        this.processSchedule[endTime] = [
-          ...this.processSchedule[endTime],
-          { process, type: 'end' },
-        ]
+          const endTime = this.time + duration
+          // Reagenda o fim do processo baseado no tempo de duração dele
+          this.processSchedule[endTime] = [
+            ...this.processSchedule[endTime],
+            { process, type: 'end' },
+          ]
+        } else {
+          const endTime = this.time + 1
+          // Reagenda o inicio do proceso
+          this.processSchedule[endTime] = [
+            ...this.processSchedule[endTime],
+            { process, type: 'start' },
+          ]
+        }
       } else {
         process?.executeOnEnd()
       }

@@ -1,36 +1,32 @@
+import {
+  cozinheiros,
+  filaDePedidosEntrandoCozinha,
+  filaDePedidosEsperandoEntrega,
+} from 'src'
 import { Entity } from 'src/entity'
-import { EntitySet } from 'src/entitySet'
 import { Process } from 'src/process'
-import { Resource } from 'src/resource'
-import { Scheduler } from 'src/scheduler'
 
 export class KitchenHandler extends Process {
-  filaPedidoEntrandoCozinha: EntitySet
-  filaPedidoSendoPreparado: EntitySet
-  cozinheirosCozinha: Resource
+  pedidoSendoPreparado: Entity | undefined
 
-  constructor(
-    name: string,
-    duration: () => number,
-    filaPedidoEntrandoCozinha: EntitySet,
-    filaPedidoSendoPreparado: EntitySet,
-    cozinheiros: Resource
-  ) {
+  constructor(name: string, duration: () => number) {
     super(name, duration)
-    this.filaPedidoEntrandoCozinha = filaPedidoEntrandoCozinha
-    this.filaPedidoSendoPreparado = filaPedidoSendoPreparado
-    this.cozinheirosCozinha = cozinheiros
   }
 
   public executeOnStart() {
-    if (!this.filaPedidoEntrandoCozinha.isEmpty()) {
-      if (this.cozinheirosCozinha.allocate(1)) {
-        // se conseguir alocar um atendente, inicia do cozinhamento.
-        console.log('inicio do cozinhamento')
-        this.filaPedidoSendoPreparado.insert(
-          this.filaPedidoEntrandoCozinha.remove() as Entity
-        )
-      }
+    if (!filaDePedidosEntrandoCozinha.isEmpty() && cozinheiros.allocate(1)) {
+      // se conseguir alocar um atendente, inicio do cozinhamento.
+      console.log('inicio do cozinhamento')
+      this.pedidoSendoPreparado =
+        filaDePedidosEntrandoCozinha.remove() as Entity
+    } else {
+      return false
     }
+    return true
+  }
+
+  public executeOnEnd() {
+    filaDePedidosEsperandoEntrega.insert(this.pedidoSendoPreparado as Entity)
+    cozinheiros.release(1)
   }
 }

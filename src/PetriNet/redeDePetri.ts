@@ -40,6 +40,17 @@ export class RedePetri {
     return lugar
   }
 
+  public getLugarByLabel(label: string): Lugar | null {
+    const lugar = this.lugares.filter(
+      (lugar: Lugar) => lugar.getLabel() === label
+    )[0]
+    if (!lugar) {
+      console.log(`getLugarByLabel: Lugar com label = ${label} nao existe`)
+      return null
+    }
+    return lugar
+  }
+
   public removeLugar(id: number) {
     const lugar = this.getLugar(id)
     let index = lugar && this.lugares.indexOf(lugar)

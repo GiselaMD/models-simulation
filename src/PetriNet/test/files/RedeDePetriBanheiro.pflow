@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><document>
     <id/>
     <x/>
-    <y/>
+    <y
     <label/>
     <subnet>
         <id/>
@@ -10,162 +10,192 @@
         <label/>
         <place>
             <id>35</id>
-            <x>-310</x>
-            <y>-181</y>
+            <x>-144</x>
+            <y>-171</y>
             <label>GarcomLivre</label>
-            <tokens>0</tokens>
+            <tokens>1</tokens>
             <isStatic>false</isStatic>
         </place>
         <place>
             <id>36</id>
-            <x>-187</x>
-            <y>-217</y>
+            <x>-21</x>
+            <y>-222</y>
             <label>substituirCaixa</label>
             <tokens>0</tokens>
             <isStatic>false</isStatic>
         </place>
         <place>
             <id>37</id>
-            <x>-59</x>
-            <y>-226</y>
+            <x>114</x>
+            <y>-223</y>
             <label>pedidoPronto</label>
             <tokens>0</tokens>
             <isStatic>false</isStatic>
         </place>
         <place>
             <id>38</id>
-            <x>81</x>
-            <y>-226</y>
+            <x>250</x>
+            <y>-223</y>
             <label>clienteVaiSentar</label>
             <tokens>0</tokens>
             <isStatic>false</isStatic>
         </place>
         <place>
             <id>39</id>
-            <x>-187</x>
-            <y>-69</y>
+            <x>-21</x>
+            <y>-59</y>
             <label>garcomNoCaixa</label>
             <tokens>0</tokens>
             <isStatic>false</isStatic>
         </place>
         <place>
             <id>40</id>
-            <x>-52</x>
-            <y>-69</y>
+            <x>114</x>
+            <y>-59</y>
             <label>levandoPedido</label>
             <tokens>0</tokens>
             <isStatic>false</isStatic>
         </place>
         <place>
             <id>41</id>
-            <x>84</x>
-            <y>-65</y>
+            <x>250</x>
+            <y>-55</y>
             <label>higienizandoMesa</label>
+            <tokens>1</tokens>
+            <isStatic>false</isStatic>
+        </place>
+        <place>
+            <id>48</id>
+            <x>115</x>
+            <y>116</y>
+            <label>pedidoEntregue</label>
+            <tokens>0</tokens>
+            <isStatic>false</isStatic>
+        </place>
+        <place>
+            <id>49</id>
+            <x>253</x>
+            <y>115</y>
+            <label>mesaHigienizada</label>
+            <tokens>0</tokens>
+            <isStatic>false</isStatic>
+        </place>
+        <place>
+            <id>50</id>
+            <x>-25</x>
+            <y>102</y>
+            <label>atendenteVoltou</label>
             <tokens>0</tokens>
             <isStatic>false</isStatic>
         </place>
         <transition>
             <id>42</id>
-            <x>-187</x>
-            <y>-122</y>
+            <x>-22</x>
+            <y>-120</y>
             <label/>
         </transition>
         <transition>
             <id>43</id>
-            <x>-190</x>
-            <y>12</y>
+            <x>-24</x>
+            <y>22</y>
             <label/>
         </transition>
         <transition>
             <id>44</id>
-            <x>-52</x>
-            <y>-124</y>
+            <x>114</x>
+            <y>-123</y>
             <label/>
         </transition>
         <transition>
             <id>45</id>
-            <x>79</x>
-            <y>-122</y>
+            <x>252</x>
+            <y>-127</y>
             <label/>
         </transition>
         <transition>
             <id>46</id>
-            <x>-52</x>
-            <y>16</y>
+            <x>114</x>
+            <y>26</y>
             <label/>
         </transition>
         <transition>
             <id>47</id>
-            <x>84</x>
-            <y>15</y>
+            <x>250</x>
+            <y>25</y>
             <label/>
         </transition>
         <arc>
             <type>regular</type>
-            <sourceId>35</sourceId>
-            <destinationId>42</destinationId>
+            <sourceId>47</sourceId>
+            <destinationId>35</destinationId>
+            <multiplicity>1</multiplicity>
+            <breakPoint>
+                <x>138</x>
+                <y>191</y>
+            </breakPoint>
+            <breakPoint>
+                <x>-40</x>
+                <y>212</y>
+            </breakPoint>
+            <breakPoint>
+                <x>-136</x>
+                <y>102</y>
+            </breakPoint>
+        </arc>
+        <arc>
+            <type>regular</type>
+            <sourceId>46</sourceId>
+            <destinationId>35</destinationId>
+            <multiplicity>1</multiplicity>
+            <breakPoint>
+                <x>47</x>
+                <y>100</y>
+            </breakPoint>
+            <breakPoint>
+                <x>29</x>
+                <y>171</y>
+            </breakPoint>
+            <breakPoint>
+                <x>-29</x>
+                <y>182</y>
+            </breakPoint>
+            <breakPoint>
+                <x>-110</x>
+                <y>94</y>
+            </breakPoint>
+        </arc>
+        <arc>
+            <type>regular</type>
+            <sourceId>50</sourceId>
+            <destinationId>43</destinationId>
             <multiplicity>1</multiplicity>
         </arc>
         <arc>
             <type>regular</type>
-            <sourceId>36</sourceId>
-            <destinationId>42</destinationId>
+            <sourceId>49</sourceId>
+            <destinationId>47</destinationId>
             <multiplicity>1</multiplicity>
         </arc>
         <arc>
             <type>regular</type>
-            <sourceId>37</sourceId>
-            <destinationId>44</destinationId>
+            <sourceId>48</sourceId>
+            <destinationId>46</destinationId>
             <multiplicity>1</multiplicity>
         </arc>
         <arc>
             <type>regular</type>
-            <sourceId>38</sourceId>
-            <destinationId>45</destinationId>
-            <multiplicity>1</multiplicity>
-        </arc>
-        <arc>
-            <type>regular</type>
-            <sourceId>35</sourceId>
-            <destinationId>44</destinationId>
+            <sourceId>43</sourceId>
+            <destinationId>35</destinationId>
             <multiplicity>1</multiplicity>
             <breakPoint>
                 <x>-95</x>
-                <y>-154</y>
+                <y>-28</y>
             </breakPoint>
         </arc>
         <arc>
             <type>regular</type>
-            <sourceId>35</sourceId>
-            <destinationId>45</destinationId>
-            <multiplicity>1</multiplicity>
-            <breakPoint>
-                <x>21</x>
-                <y>-174</y>
-            </breakPoint>
-        </arc>
-        <arc>
-            <type>regular</type>
-            <sourceId>42</sourceId>
-            <destinationId>39</destinationId>
-            <multiplicity>1</multiplicity>
-        </arc>
-        <arc>
-            <type>regular</type>
-            <sourceId>44</sourceId>
-            <destinationId>40</destinationId>
-            <multiplicity>1</multiplicity>
-        </arc>
-        <arc>
-            <type>regular</type>
-            <sourceId>45</sourceId>
-            <destinationId>41</destinationId>
-            <multiplicity>1</multiplicity>
-        </arc>
-        <arc>
-            <type>regular</type>
-            <sourceId>39</sourceId>
-            <destinationId>43</destinationId>
+            <sourceId>41</sourceId>
+            <destinationId>47</destinationId>
             <multiplicity>1</multiplicity>
         </arc>
         <arc>
@@ -176,35 +206,71 @@
         </arc>
         <arc>
             <type>regular</type>
-            <sourceId>41</sourceId>
-            <destinationId>47</destinationId>
+            <sourceId>39</sourceId>
+            <destinationId>43</destinationId>
             <multiplicity>1</multiplicity>
         </arc>
         <arc>
             <type>regular</type>
-            <sourceId>43</sourceId>
-            <destinationId>35</destinationId>
+            <sourceId>45</sourceId>
+            <destinationId>41</destinationId>
             <multiplicity>1</multiplicity>
         </arc>
         <arc>
             <type>regular</type>
-            <sourceId>46</sourceId>
-            <destinationId>35</destinationId>
+            <sourceId>44</sourceId>
+            <destinationId>40</destinationId>
+            <multiplicity>1</multiplicity>
+        </arc>
+        <arc>
+            <type>regular</type>
+            <sourceId>42</sourceId>
+            <destinationId>39</destinationId>
+            <multiplicity>1</multiplicity>
+        </arc>
+        <arc>
+            <type>regular</type>
+            <sourceId>35</sourceId>
+            <destinationId>45</destinationId>
             <multiplicity>1</multiplicity>
             <breakPoint>
-                <x>-253</x>
-                <y>76</y>
+                <x>187</x>
+                <y>-164</y>
             </breakPoint>
         </arc>
         <arc>
             <type>regular</type>
-            <sourceId>47</sourceId>
-            <destinationId>35</destinationId>
+            <sourceId>35</sourceId>
+            <destinationId>44</destinationId>
             <multiplicity>1</multiplicity>
             <breakPoint>
-                <x>-195</x>
-                <y>139</y>
+                <x>71</x>
+                <y>-144</y>
             </breakPoint>
+        </arc>
+        <arc>
+            <type>regular</type>
+            <sourceId>38</sourceId>
+            <destinationId>45</destinationId>
+            <multiplicity>1</multiplicity>
+        </arc>
+        <arc>
+            <type>regular</type>
+            <sourceId>37</sourceId>
+            <destinationId>44</destinationId>
+            <multiplicity>1</multiplicity>
+        </arc>
+        <arc>
+            <type>regular</type>
+            <sourceId>36</sourceId>
+            <destinationId>42</destinationId>
+            <multiplicity>1</multiplicity>
+        </arc>
+        <arc>
+            <type>regular</type>
+            <sourceId>35</sourceId>
+            <destinationId>42</destinationId>
+            <multiplicity>1</multiplicity>
         </arc>
     </subnet>
     <roles/>
