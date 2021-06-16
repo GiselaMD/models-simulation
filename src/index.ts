@@ -4,6 +4,7 @@ import { Scheduler } from './scheduler'
 import { ClientHandler } from './Restaurant/CachierManager/clientHandler'
 import { RedePetri } from './PetriNet/redeDePetri'
 import { run } from './PetriNet/test'
+import { RestroomRequestHandler } from './Restaurant/RestroomManager/restroomRequestHandler'
 
 // Cria o Scheduler
 export const scheduler = new Scheduler()
@@ -16,12 +17,9 @@ export const waiterPetriNet = run(
 // Quantidade de garçons
 waiterPetriNet.getLugarByLabel('gacomLivre')?.insereToken(5)
 
-//TODO: Acabar a rede de Petri e os processos de Wait do TableManager.
-//TODO: Garcom como Entity, onde os processos receberiam os callbacks.
-//TODO: Colocar todos os startProcessNow de todos os Process.
-//TODO: Criar todos os executeOnEnd().
-//TODO: Revisar parâmetro duration e scheduler nos processos.
-//TODO: Passar entidade para dentro do processo. O processo precisa acessar a rede de Petri.
+//TODO: Resolver o problema do warning.
+//TODO: Testar e validar o trabalho.
+//TODO: Revisar o tempo do duration de todos os processos.
 
 // ------------------------------ Recursos do sistema ------------------------------
 
@@ -134,11 +132,19 @@ export const filaDeClientesComendoNaMesa4 = scheduler.createEntitySet(
 // ------------------------------ Gerenciando os processos do sistema ------------------------------
 
 // Cria o processo de um cliente (clientes entrando no restaurante e sendo levado a um caixa especifico)
-const processoCliente = scheduler.createProcess(
-  new ClientHandler('ProcessoCliente', () => scheduler.uniform(1, 4))
-)
 
-scheduler.startProcessNow(processoCliente)
+scheduler.startProcessNow(
+  scheduler.createProcess(
+    new ClientHandler('ProcessoCliente', () => scheduler.uniform(1, 4))
+  )
+)
+scheduler.startProcessNow(
+  scheduler.createProcess(
+    new RestroomRequestHandler('RestroomRequestHandler', () =>
+      scheduler.uniform(1, 4)
+    )
+  )
+)
 
 // ---------- Simulando o sistema ----------
 

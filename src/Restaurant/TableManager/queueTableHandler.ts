@@ -13,7 +13,7 @@ import {
 } from 'src'
 import { Entity } from 'src/entity'
 import { Process } from 'src/process'
-import { WaiterPetriNet } from '../waiterPetriNet'
+import { WaiterPetriNet } from '../WaiterManager/waiterPetriNet'
 
 export class QueueTableHandler extends Process {
   mesa: String = ''

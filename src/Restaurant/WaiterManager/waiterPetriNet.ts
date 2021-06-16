@@ -13,8 +13,8 @@ import {
 } from 'src'
 import { Entity } from 'src/entity'
 import { Process } from 'src/process'
-import { WaiterOrderHandler } from './KitchenManager/waiterOrderHandler'
-import { EatingTableHandler } from './TableManager/eatingTableHandler'
+import { WaiterOrderHandler } from '../KitchenManager/waiterOrderHandler'
+import { EatingTableHandler } from '../TableManager/eatingTableHandler'
 
 export class WaiterPetriNet extends Process {
   local: string = ''

@@ -8,7 +8,7 @@ import {
 } from 'src'
 import { EntitySet } from 'src/entitySet'
 import { Process } from 'src/process'
-import { WaiterPetriNet } from '../waiterPetriNet'
+import { WaiterPetriNet } from '../WaiterManager/waiterPetriNet'
 import { Order } from './order'
 
 export class WaiterOrderHandler extends Process {
