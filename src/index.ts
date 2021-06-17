@@ -10,12 +10,19 @@ import { RestroomRequestHandler } from './Restaurant/RestroomManager/restroomReq
 export const scheduler = new Scheduler()
 
 // Cria a rede de Petri
+console.log('ANTES')
+//'RedeDePetriBanheiro.pflow'
 export const waiterPetriNet = run(
-  'RedeDePetriBanheiroCerta.pflow'
+  'RedeDePetriBanheiro.pflow'
 ) as unknown as RedePetri
 
+console.log('DEPOIS')
+
+// export const waiterPetriNet = new RedePetri()
+// waiterPetriNet.criaLugar(1000, 'GarcomLivre')
+
 // Quantidade de garçons
-waiterPetriNet.getLugarByLabel('gacomLivre')?.insereToken(5)
+waiterPetriNet.getLugarByLabel('GarcomLivre')?.insereToken(5)
 
 //TODO: Resolver o problema do warning.
 //TODO: Testar e validar o trabalho.
@@ -134,15 +141,11 @@ export const filaDeClientesComendoNaMesa4 = scheduler.createEntitySet(
 // Cria o processo de um cliente (clientes entrando no restaurante e sendo levado a um caixa especifico)
 
 scheduler.startProcessNow(
-  scheduler.createProcess(
-    new ClientHandler('ProcessoCliente', () => scheduler.uniform(1, 4))
-  )
+  new ClientHandler('ProcessoCliente', () => scheduler.uniform(1, 4))
 )
 scheduler.startProcessNow(
-  scheduler.createProcess(
-    new RestroomRequestHandler('RestroomRequestHandler', () =>
-      scheduler.uniform(1, 4)
-    )
+  new RestroomRequestHandler('RestroomRequestHandler', () =>
+    scheduler.uniform(1, 4)
   )
 )
 

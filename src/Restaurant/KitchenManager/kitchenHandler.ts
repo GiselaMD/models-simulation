@@ -2,9 +2,9 @@ import {
   cozinheiros,
   filaDePedidosEntrandoCozinha,
   filaDePedidosEsperandoEntrega,
-} from 'src'
-import { Entity } from 'src/entity'
-import { Process } from 'src/process'
+} from '../../../src'
+import { Entity } from '../../../src/entity'
+import { Process } from '../../../src/process'
 
 export class KitchenHandler extends Process {
   pedidoSendoPreparado: Entity | undefined

@@ -5,9 +5,9 @@ import {
   filaDePedidosEsperandoEntrega,
   scheduler,
   waiterPetriNet,
-} from 'src'
-import { EntitySet } from 'src/entitySet'
-import { Process } from 'src/process'
+} from '../../../src'
+import { EntitySet } from '../../../src/entitySet'
+import { Process } from '../../../src/process'
 import { WaiterPetriNet } from '../WaiterManager/waiterPetriNet'
 import { Order } from './order'
 
@@ -18,16 +18,18 @@ export class WaiterOrderHandler extends Process {
   }
 
   public searchOrder(clientesEsperandoMesa: EntitySet) {
-    clientesEsperandoMesa.getEntitySet().forEach(cliente => {
+    for (let cliente of clientesEsperandoMesa.getEntitySet()) {
+      //clientesEsperandoMesa.getEntitySet().forEach(cliente => {
       // TODO: Revisar esse aviso.
-      filaDePedidosEsperandoEntrega.getEntitySet().forEach(pedido => {
+      for (let pedido of filaDePedidosEsperandoEntrega.getEntitySet()) {
+        //filaDePedidosEsperandoEntrega.getEntitySet().forEach(pedido => {
         let order = pedido as Order
         if ((cliente.getId() as string) == order.getIdCliente()) {
           filaDePedidosEsperandoEntrega.removeById(order.getId() as string)
           return true
         }
-      })
-    })
+      }
+    }
     return false
   }
 

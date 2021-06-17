@@ -1,11 +1,11 @@
 import { readFileSync } from 'fs'
-import { parseStringPromise, processors } from 'xml2js'
+import { parseString, parseStringPromise, processors } from 'xml2js'
 import { Lugar } from '../lugar'
 
 import { RedePetri } from '../redeDePetri'
 import { Transicao } from '../transicao'
 
-run(process.argv[2])
+//run(process.argv[2])
 
 // CALLBACKS
 const entrouNoLugar = (qtdTokens: number) =>
@@ -17,6 +17,7 @@ const saiuDoLugar = (qtdTokens: number) =>
 const trasicaoDisparada = () => console.log('DISPAROU TRANSIÇÃO')
 
 export async function run(filename: string) {
+  console.log('OLAAAAAAAAAA' + filename)
   if (!filename) {
     console.error('Parametro file_name eh obrigatorio!')
     return
@@ -26,11 +27,32 @@ export async function run(filename: string) {
     encoding: 'utf8',
   })
 
+  const obj = await new Promise((resolve, reject) => {
+    parseString(xml, function (err, result) {
+      if (err) return reject(err)
+      resolve(result)
+    })
+  })
+
+  console.log(obj)
+
+  //console.log(xml)
+  //console.log(xml)
+  //console.log(processors.parseNumbers)
+  //console.log(xml['subnet'])
+  console.log('ESTOU(1) AKIIIII')
+  console.log(
+    await parseStringPromise(xml, {
+      valueProcessors: [processors.parseNumbers],
+    })
+  )
+
   const {
     document: { subnet },
   } = await parseStringPromise(xml, {
     valueProcessors: [processors.parseNumbers],
   })
+  console.log('ESTOU AKIIIII')
 
   const rede = new RedePetri()
   const componentesRede: any = {}
@@ -96,8 +118,8 @@ export async function run(filename: string) {
       arc.type[0] === 'reset'
     )
   }
-
   rede.init()
+
   return rede
   //rede.exibeMenu()
 }

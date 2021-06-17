@@ -1,5 +1,5 @@
-import { scheduler, waiterPetriNet } from 'src'
-import { Process } from 'src/process'
+import { scheduler, waiterPetriNet } from '../../../src'
+import { Process } from '../../../src/process'
 import { WaiterPetriNet } from '../WaiterManager/waiterPetriNet'
 
 export class RestroomRequestHandler extends Process {
@@ -21,10 +21,8 @@ export class RestroomRequestHandler extends Process {
 
   public executeOnEnd() {
     scheduler.startProcessNow(
-      scheduler.createProcess(
-        new RestroomRequestHandler('RestroomRequestHandler', () =>
-          scheduler.uniform(1, 4)
-        )
+      new RestroomRequestHandler('RestroomRequestHandler', () =>
+        scheduler.uniform(1, 4)
       )
     )
   }

@@ -41,6 +41,7 @@ export class RedePetri {
   }
 
   public getLugarByLabel(label: string): Lugar | null {
+    console.log('LUGAAAARR BY LABEEELLL')
     const lugar = this.lugares.filter(
       (lugar: Lugar) => lugar.getLabel() === label
     )[0]

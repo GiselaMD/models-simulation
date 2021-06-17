@@ -10,9 +10,9 @@ import {
   filaDeClientesComendoNaMesa2,
   filaDeClientesComendoNaMesa4,
   filaDeClientesComendoNoBalcao,
-} from 'src'
-import { Entity } from 'src/entity'
-import { Process } from 'src/process'
+} from '../../../src'
+import { Entity } from '../../../src/entity'
+import { Process } from '../../../src/process'
 import { WaiterOrderHandler } from '../KitchenManager/waiterOrderHandler'
 import { EatingTableHandler } from '../TableManager/eatingTableHandler'
 

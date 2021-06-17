@@ -8,9 +8,9 @@ import {
   filaDeClientesNoCaixa2,
   filaDePedidosEntrandoCozinha,
   scheduler,
-} from 'src'
-import { Entity } from 'src/entity'
-import { Process } from 'src/process'
+} from '../../../src'
+import { Entity } from '../../../src/entity'
+import { Process } from '../../../src/process'
 import { KitchenHandler } from '../KitchenManager/kitchenHandler'
 import { Order } from '../KitchenManager/order'
 import { QueueTableHandler } from '../TableManager/queueTableHandler'

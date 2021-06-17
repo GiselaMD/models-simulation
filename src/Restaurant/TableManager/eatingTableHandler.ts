@@ -5,8 +5,8 @@ import {
   filaDeClientesComendoNoBalcao,
   mesas2Livres,
   mesas4Livres,
-} from 'src'
-import { Process } from 'src/process'
+} from '../../../src'
+import { Process } from '../../../src/process'
 
 export class EatingTableHandler extends Process {
   constructor(name: string, duration: () => number) {

@@ -64,19 +64,28 @@ export class Scheduler {
    * @returns o agendamento do começo processo em um momento específico
    */
   public startProcessAt(process: Process, absoluteTime: number) {
+    //console.log('ABSOLUTEEEEEEEEEE: ' + this.processSchedule[absoluteTime])
     this.isDebbuger &&
       console.log(
         `startProcessAt, com id ${process.getId()} e absoluteTime: ${absoluteTime}`
       )
-    this.processSchedule = {
-      ...this.processSchedule,
-      [absoluteTime]: [
-        ...this.processSchedule[absoluteTime],
-        { process, type: 'start' },
-      ],
+
+    if (this.processSchedule[absoluteTime]) {
+      this.processSchedule = {
+        ...this.processSchedule,
+        [absoluteTime]: [
+          ...this.processSchedule[absoluteTime],
+          { process, type: 'start' },
+        ],
+      }
+    } else {
+      this.processSchedule = {
+        ...this.processSchedule,
+        [absoluteTime]: [{ process, type: 'start' }],
+      }
     }
     // TODO: remover depois
-    console.log(`processSchedule`, this.processSchedule)
+    //console.log(`processSchedule`, this.processSchedule)
   }
 
   /**
@@ -100,12 +109,17 @@ export class Scheduler {
 
   private executeSimulation() {
     // Pega o primeiro tempo disponível no modelo
-    const [time] = Object.keys(this.processSchedule).map(parseInt).sort()
+    const [time] = Object.keys(this.processSchedule).map(parseFloat).sort()
     // Atualiza o tempo do modelo pro tempo atual do processo
     this.time = time
 
     const processes = this.processSchedule[time]
-
+    //console.log('PROCESSESSSS: ' + processes)
+    //console.log(
+    //   'Process Schedule: ',
+    //   JSON.parse(JSON.stringify(this.processSchedule))
+    // )
+    //console.log('time: ' + time)
     // Varre os processos do tempo "time"
     while (processes.length > 0) {
       // Remove o primeiro processo do array
@@ -119,10 +133,14 @@ export class Scheduler {
 
           const endTime = this.time + duration
           // Reagenda o fim do processo baseado no tempo de duração dele
-          this.processSchedule[endTime] = [
-            ...this.processSchedule[endTime],
-            { process, type: 'end' },
-          ]
+          if (this.processSchedule[endTime]) {
+            this.processSchedule[endTime] = [
+              ...this.processSchedule[endTime],
+              { process, type: 'end' },
+            ]
+          } else {
+            this.processSchedule[endTime] = [{ process, type: 'end' }]
+          }
         } else {
           const endTime = this.time + 1
           // Reagenda o inicio do proceso
