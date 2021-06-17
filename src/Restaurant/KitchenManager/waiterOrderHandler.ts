@@ -54,12 +54,14 @@ export class WaiterOrderHandler extends Process {
     } else {
       return false
     }
-    waiterPetriNet.getLugarByLabel('pedidoPronto')?.insereToken(1)
+    waiterPetriNet.petriNet?.getLugarByLabel('pedidoPronto')?.insereToken(1)
     scheduler.startProcessNow(
-      new WaiterPetriNet(
-        'WaiterPetriNet-' + this.mesa,
-        () => scheduler.uniform(1, 4),
-        'levandoPedido'
+      scheduler.createProcess(
+        new WaiterPetriNet(
+          'WaiterPetriNet-' + this.mesa,
+          () => scheduler.uniform(1, 4),
+          'levandoPedido'
+        )
       )
     )
     return true

@@ -93,6 +93,7 @@ export class EntitySet {
       return
     }
     if (!entity.id) {
+      console.log(entity.getName())
       console.error('Id not setted in entity')
       return
     }

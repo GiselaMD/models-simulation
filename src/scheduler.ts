@@ -4,6 +4,7 @@ import { EntitySet, Mode } from './entitySet'
 import { Process } from './process'
 import { Resource } from './resource'
 import { uuid } from 'uuidv4'
+import { randomInt } from 'crypto'
 
 type ProcessItem = {
   process: Process
@@ -39,6 +40,7 @@ export class Scheduler {
    * @returns Inicializa o processo.
    */
   public startProcessNow(process: Process) {
+    console.log('CRIANDO PROCESSO: ' + process.name)
     this.isDebbuger && console.log('startProcessNow, com id:', process.getId())
     this.startProcessAt(process, this.time)
   }
@@ -64,7 +66,6 @@ export class Scheduler {
    * @returns o agendamento do começo processo em um momento específico
    */
   public startProcessAt(process: Process, absoluteTime: number) {
-    //console.log('ABSOLUTEEEEEEEEEE: ' + this.processSchedule[absoluteTime])
     this.isDebbuger &&
       console.log(
         `startProcessAt, com id ${process.getId()} e absoluteTime: ${absoluteTime}`
@@ -85,7 +86,7 @@ export class Scheduler {
       }
     }
     // TODO: remover depois
-    //console.log(`processSchedule`, this.processSchedule)
+    console.log(`processSchedule`, this.processSchedule)
   }
 
   /**
@@ -112,14 +113,10 @@ export class Scheduler {
     const [time] = Object.keys(this.processSchedule).map(parseFloat).sort()
     // Atualiza o tempo do modelo pro tempo atual do processo
     this.time = time
+    console.log('TEMPO ATUAL PROCESSO: ' + this.time)
 
     const processes = this.processSchedule[time]
-    //console.log('PROCESSESSSS: ' + processes)
-    //console.log(
-    //   'Process Schedule: ',
-    //   JSON.parse(JSON.stringify(this.processSchedule))
-    // )
-    //console.log('time: ' + time)
+
     // Varre os processos do tempo "time"
     while (processes.length > 0) {
       // Remove o primeiro processo do array
@@ -357,7 +354,9 @@ export class Scheduler {
    */
   public uniform(minValue: number, maxValue: number) {
     const rvg = new RandVarGen()
-    const result = rvg.uniform(minValue, maxValue)
+    // TODO: Não funciona, resulta em 1.6428710408508778.
+    //const result = rvg.uniform(minValue, maxValue)
+    const result = randomInt(minValue, maxValue)
     this.isDebbuger &&
       console.log(
         `Calculou uniform com minValue = ${minValue}, maxValue = ${maxValue}, e resultado = ${result}`

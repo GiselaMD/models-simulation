@@ -2,18 +2,16 @@ import { EntitySet, Mode } from './entitySet'
 import { Resource } from './resource'
 import { Scheduler } from './scheduler'
 import { ClientHandler } from './Restaurant/CachierManager/clientHandler'
-import { RedePetri } from './PetriNet/redeDePetri'
-import { run } from './PetriNet/test'
 import { RestroomRequestHandler } from './Restaurant/RestroomManager/restroomRequestHandler'
-import { PetriNetHandler } from './Restaurant/PetriNetManager/petriNetHandler'
 
 // Cria o Scheduler
 export const scheduler = new Scheduler()
 
-export const waiterPetriNet = new PetriNetHandler()
-waiterPetriNet.createPetriNet()
+// export const waiterPetriNet = new RedePetri()
+// waiterPetriNet?.criaLugar(1000, 'GarcomLivre')
+
 // Quantidade de garçons
-waiterPetriNet.petriNet?.getLugarByLabel('garcomLivre')?.insereToken(5)
+//waiterPetriNet?.getLugarByLabel('GarcomLivre')?.insereToken(5)
 
 //TODO: Resolver o problema do warning.
 //TODO: Testar e validar o trabalho.
@@ -72,6 +70,18 @@ export const filaDePedidosSendoPreparados = scheduler.createEntitySet(
 export const filaDePedidosEsperandoEntrega = scheduler.createEntitySet(
   new EntitySet('pedidoEsperandoEntrega', 'FIFO' as Mode, 100)
 )
+
+// Validar a criação de rede de Petri para os garcons --> alterar depois
+scheduler.createEntitySet(
+  new EntitySet('filaEntregaGarcom', 'FIFO' as Mode, 100)
+)
+
+// Banheiro
+scheduler.createEntitySet(new EntitySet('esperandoGarcom', 'FIFO' as Mode, 100))
+scheduler.createEntitySet(
+  new EntitySet('requisitandoBanheiro', 'FIFO' as Mode, 100)
+)
+scheduler.createEntitySet(new EntitySet('noBanheiro', 'FIFO' as Mode, 100))
 
 // Bancos balcao
 export const filaDeClientesNoBalcao = scheduler.createEntitySet(
@@ -135,13 +145,5 @@ scheduler.startProcessNow(
 // ---------- Simulando o sistema ----------
 
 // Simula o sistema até esgotar
-//scheduler.simulateOneStep()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
+scheduler.simulateOneStep()
+// scheduler.simulate()

@@ -46,12 +46,14 @@ export class QueueTableHandler extends Process {
       }
     }
 
-    waiterPetriNet.getLugarByLabel('higienizandoMesa')?.insereToken(1)
+    waiterPetriNet.petriNet?.getLugarByLabel('higienizandoMesa')?.insereToken(1)
     scheduler.startProcessNow(
-      new WaiterPetriNet(
-        'WaiterPetriNet-' + this.mesa,
-        () => scheduler.uniform(1, 4),
-        'higienizandoMesa'
+      scheduler.createProcess(
+        new WaiterPetriNet(
+          'WaiterPetriNet-' + this.mesa,
+          () => scheduler.uniform(1, 4),
+          'higienizandoMesa'
+        )
       )
     )
     return true

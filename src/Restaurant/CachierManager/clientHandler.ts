@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto'
 import {
   filaDeClientesNoCaixa1,
   filaDeClientesNoCaixa2,
@@ -14,27 +15,36 @@ export class ClientHandler extends Process {
   }
 
   public executeOnEnd() {
-    const cliente = 'cliente' + scheduler.uniform(1, 4)
+    const cliente = 'cliente' + randomInt(1, 5)
+    console.log('Cliente --> ' + cliente)
 
-    if (filaDeClientesNoCaixa1.getSize() < filaDeClientesNoCaixa2.getSize()) {
-      filaDeClientesNoCaixa1.insert(new Entity({ name: cliente }))
+    if (filaDeClientesNoCaixa1.getSize() <= filaDeClientesNoCaixa2.getSize()) {
+      filaDeClientesNoCaixa1.insert(
+        scheduler.createEntity(new Entity({ name: cliente }))
+      )
       this.numCaixaDestino = 1
     } else {
-      filaDeClientesNoCaixa2.insert(new Entity({ name: cliente }))
+      filaDeClientesNoCaixa2.insert(
+        scheduler.createEntity(new Entity({ name: cliente }))
+      )
       this.numCaixaDestino = 2
     }
 
     // Se auto agenda
     scheduler.startProcessNow(
-      new ClientHandler('ProcessoCliente', () => scheduler.uniform(1, 4))
+      scheduler.createProcess(
+        new ClientHandler('ProcessoCliente', () => scheduler.uniform(1, 4))
+      )
     )
 
     // Inicia processo do caixa
     scheduler.startProcessNow(
-      new CachierHandler(
-        'ProcessoEsperaAtendimentoCaixa' + this.numCaixaDestino,
-        () => scheduler.uniform(1, 4),
-        this.numCaixaDestino
+      scheduler.createProcess(
+        new CachierHandler(
+          'ProcessoEsperaAtendimentoCaixa' + this.numCaixaDestino,
+          () => scheduler.uniform(1, 4),
+          this.numCaixaDestino
+        )
       )
     )
   }

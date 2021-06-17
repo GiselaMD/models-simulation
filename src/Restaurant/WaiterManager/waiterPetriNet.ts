@@ -25,15 +25,17 @@ export class WaiterPetriNet extends Process {
   }
 
   public executeOnStart() {
-    waiterPetriNet.executaCiclo()
+    waiterPetriNet.petriNet?.executaCiclo()
     return true
   }
 
   public executeOnEnd() {
     if (this.local == 'garcomNoCaixa') {
-      waiterPetriNet.getLugarByLabel('atendenteVoltou')?.insereToken(1)
+      waiterPetriNet.petriNet
+        ?.getLugarByLabel('atendenteVoltou')
+        ?.insereToken(1)
     } else if (this.local == 'levandoPedido') {
-      waiterPetriNet.getLugarByLabel('pedidoEntregue')?.insereToken(1)
+      waiterPetriNet.petriNet?.getLugarByLabel('pedidoEntregue')?.insereToken(1)
       if (this.name == 'WaiterPetriNet-balcao') {
         filaDeClientesComendoNoBalcao.insert(
           filaDeClientesEsperandoPedidoNoBalcao.remove() as Entity
@@ -51,12 +53,16 @@ export class WaiterPetriNet extends Process {
         this.mesa = 'M4'
       }
       scheduler.startProcessNow(
-        new EatingTableHandler('EatingTableHandler-' + this.name, () =>
-          scheduler.uniform(1, 4)
+        scheduler.createProcess(
+          new EatingTableHandler('EatingTableHandler-' + this.name, () =>
+            scheduler.uniform(1, 4)
+          )
         )
       )
     } else if (this.local == 'higienizandoMesa') {
-      waiterPetriNet.getLugarByLabel('mesaHigienizada')?.insereToken(1)
+      waiterPetriNet.petriNet
+        ?.getLugarByLabel('mesaHigienizada')
+        ?.insereToken(1)
       if (this.name == 'WaiterPetriNet-balcao') {
         filaDeClientesEsperandoPedidoNoBalcao.insert(
           filaGarcomLimpaBalcao.remove() as Entity
@@ -74,11 +80,13 @@ export class WaiterPetriNet extends Process {
         this.mesa = 'M4'
       }
       scheduler.startProcessNow(
-        new WaiterOrderHandler('WaiterOrderHandler-' + this.name, () =>
-          scheduler.uniform(1, 1)
+        scheduler.createProcess(
+          new WaiterOrderHandler('WaiterOrderHandler-' + this.name, () =>
+            scheduler.uniform(1, 1)
+          )
         )
       )
     }
-    waiterPetriNet.executaCiclo()
+    waiterPetriNet.petriNet?.executaCiclo()
   }
 }

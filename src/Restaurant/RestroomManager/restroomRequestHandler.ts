@@ -8,12 +8,14 @@ export class RestroomRequestHandler extends Process {
   }
 
   public executeOnStart() {
-    waiterPetriNet.getLugarByLabel('substituirCaixa')?.insereToken(1)
+    waiterPetriNet.petriNet?.getLugarByLabel('substituirCaixa')?.insereToken(1)
     scheduler.startProcessNow(
-      new WaiterPetriNet(
-        'WaiterPetriNet',
-        () => scheduler.uniform(1, 4),
-        'levandoPedido'
+      scheduler.createProcess(
+        new WaiterPetriNet(
+          'WaiterPetriNet',
+          () => scheduler.uniform(1, 4),
+          'levandoPedido'
+        )
       )
     )
     return true
@@ -21,8 +23,10 @@ export class RestroomRequestHandler extends Process {
 
   public executeOnEnd() {
     scheduler.startProcessNow(
-      new RestroomRequestHandler('RestroomRequestHandler', () =>
-        scheduler.uniform(1, 4)
+      scheduler.createProcess(
+        new RestroomRequestHandler('RestroomRequestHandler', () =>
+          scheduler.uniform(1, 4)
+        )
       )
     )
   }

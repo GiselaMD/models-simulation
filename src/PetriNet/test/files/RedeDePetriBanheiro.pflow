@@ -12,7 +12,7 @@
             <id>35</id>
             <x>-144</x>
             <y>-171</y>
-            <label>GarcomLivre</label>
+            <label>garcomLivre</label>
             <tokens>0</tokens>
             <isStatic>false</isStatic>
         </place>
