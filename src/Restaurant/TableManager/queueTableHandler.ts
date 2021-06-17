@@ -10,9 +10,9 @@ import {
   mesas4Livres,
   scheduler,
   waiterPetriNet,
-} from '../../../src'
-import { Entity } from '../../../src/entity'
-import { Process } from '../../../src/process'
+} from '../..'
+import { Entity } from '../../entity'
+import { Process } from '../../process'
 import { WaiterPetriNet } from '../WaiterManager/waiterPetriNet'
 
 export class QueueTableHandler extends Process {

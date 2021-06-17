@@ -5,9 +5,9 @@ import {
   filaDePedidosEsperandoEntrega,
   scheduler,
   waiterPetriNet,
-} from '../../../src'
-import { EntitySet } from '../../../src/entitySet'
-import { Process } from '../../../src/process'
+} from '../..'
+import { EntitySet } from '../../entitySet'
+import { Process } from '../../process'
 import { WaiterPetriNet } from '../WaiterManager/waiterPetriNet'
 import { Order } from './order'
 

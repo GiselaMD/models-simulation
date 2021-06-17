@@ -1,5 +1,5 @@
-import { scheduler, waiterPetriNet } from '../../../src'
-import { Process } from '../../../src/process'
+import { scheduler, waiterPetriNet } from '../..'
+import { Process } from '../../process'
 import { WaiterPetriNet } from '../WaiterManager/waiterPetriNet'
 
 export class RestroomRequestHandler extends Process {

@@ -2,9 +2,9 @@ import {
   filaDeClientesNoCaixa1,
   filaDeClientesNoCaixa2,
   scheduler,
-} from '../../../src'
-import { Entity } from '../../../src/entity'
-import { Process } from '../../../src/process'
+} from '../..'
+import { Entity } from '../../entity'
+import { Process } from '../../process'
 import { CachierHandler } from './cachierHandler'
 
 export class ClientHandler extends Process {

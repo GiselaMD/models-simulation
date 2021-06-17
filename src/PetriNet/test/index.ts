@@ -17,7 +17,6 @@ const saiuDoLugar = (qtdTokens: number) =>
 const trasicaoDisparada = () => console.log('DISPAROU TRANSIÇÃO')
 
 export async function run(filename: string) {
-  console.log('OLAAAAAAAAAA' + filename)
   if (!filename) {
     console.error('Parametro file_name eh obrigatorio!')
     return
@@ -34,25 +33,11 @@ export async function run(filename: string) {
     })
   })
 
-  console.log(obj)
-
-  //console.log(xml)
-  //console.log(xml)
-  //console.log(processors.parseNumbers)
-  //console.log(xml['subnet'])
-  console.log('ESTOU(1) AKIIIII')
-  console.log(
-    await parseStringPromise(xml, {
-      valueProcessors: [processors.parseNumbers],
-    })
-  )
-
   const {
     document: { subnet },
   } = await parseStringPromise(xml, {
     valueProcessors: [processors.parseNumbers],
   })
-  console.log('ESTOU AKIIIII')
 
   const rede = new RedePetri()
   const componentesRede: any = {}
