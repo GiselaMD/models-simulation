@@ -40,19 +40,30 @@ export class Resource {
   }
 
   /**
-   * allocate()
+   * canAllocate()
    * @param quantity de recursos na fila
    * @returns se conseguiu alocar ou não
    */
-  public allocate(quantity: number) {
+  // Precisamos validar se pode alocar
+  // caso tenha que ter mais de um recurso pra iniciar o processo
+  // não queremos alocar se não formos executar o processo
+  public canAllocate(quantity: number) {
     if (quantity <= this.quantity - this.used) {
+      return true
+    }
+    return false
+  }
+
+  /**
+   * allocate()
+   * @param quantity de recursos na fila
+   */
+  public allocate(quantity: number): void {
+    if (this.canAllocate(quantity)) {
       this.used += quantity
       this.timeAllocationStart = this.timeScheduler()
       this.qtdsAllocated.push(quantity)
-      return true
     }
-
-    return false
   }
 
   /**

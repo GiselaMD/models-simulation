@@ -26,9 +26,11 @@ export class CachierHandler extends Process {
 
   public executeOnStart() {
     // se conseguir alocar um atendente, inicia o atendimento.
-    console.log('inicio atendimento')
     if (this.numCaixa == 1) {
       if (!filaDeClientesNoCaixa1.isEmpty() && atendenteCx1.allocate(1)) {
+        console.log(
+          this.name + ': Iniciando atendimento no caixa ' + this.numCaixa
+        )
         this.clienteSendoAtendidoNoCaixa =
           filaDeClientesNoCaixa1.remove() as Entity
       } else {

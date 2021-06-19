@@ -56,12 +56,18 @@ export class Process {
   }
 
   /**
+   * canExecute()
+   * @returns se o processo pode ser executado
+   */
+  public canExecute() {
+    return true
+  }
+
+  /**
    * executeOnStart()
    * @returns faz antes de executar o processo
    */
-  public executeOnStart(): boolean {
-    return true
-  }
+  public executeOnStart() {}
 
   /**
    * executeOnEnd()

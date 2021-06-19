@@ -1,5 +1,6 @@
 import { randomInt } from 'crypto'
 import {
+  atendenteCx1,
   filaDeClientesNoCaixa1,
   filaDeClientesNoCaixa2,
   scheduler,
@@ -14,9 +15,19 @@ export class ClientHandler extends Process {
     super(name, duration)
   }
 
+  public canExecute() {
+    if (atendenteCx1.canAllocate(1)) {
+      return true
+    } else {
+      console.log('Nao tem funcionário para alocar')
+      return false
+    }
+  }
+
   public executeOnEnd() {
     const cliente = 'cliente' + randomInt(1, 5)
-    console.log('Cliente --> ' + cliente)
+    //console.log(this.name + ': Cliente entrou no restaurante ')
+    //console.log('Cliente --> ' + cliente)
 
     if (filaDeClientesNoCaixa1.getSize() <= filaDeClientesNoCaixa2.getSize()) {
       filaDeClientesNoCaixa1.insert(
@@ -30,12 +41,14 @@ export class ClientHandler extends Process {
       this.numCaixaDestino = 2
     }
 
-    // Se auto agenda
-    scheduler.startProcessNow(
-      scheduler.createProcess(
-        new ClientHandler('ProcessoCliente', () => scheduler.uniform(1, 4))
-      )
+    const createProcessClient = scheduler.createProcess(
+      new ClientHandler('ProcessoCliente', () => scheduler.uniform(1, 4))
     )
+
+    // Se auto agenda
+    scheduler.startProcessNow(createProcessClient)
+
+    console.log('PROCESSO CLIENTE', scheduler.getTime())
 
     // Inicia processo do caixa
     scheduler.startProcessNow(

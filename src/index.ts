@@ -2,8 +2,6 @@ import { EntitySet, Mode } from './entitySet'
 import { Resource } from './resource'
 import { Scheduler } from './scheduler'
 import { ClientHandler } from './Restaurant/CachierManager/clientHandler'
-import { RedePetri } from './PetriNet/redeDePetri'
-import { run } from './PetriNet/test'
 import { RestroomRequestHandler } from './Restaurant/RestroomManager/restroomRequestHandler'
 import { PetriNetHandler } from './Restaurant/PetriNetManager/petriNetHandler'
 
@@ -124,24 +122,24 @@ scheduler.startProcessNow(
     new ClientHandler('ProcessoCliente', () => scheduler.uniform(1, 4))
   )
 )
-scheduler.startProcessNow(
-  scheduler.createProcess(
-    new RestroomRequestHandler('RestroomRequestHandler', () =>
-      scheduler.uniform(1, 4)
-    )
-  )
-)
+// scheduler.startProcessNow(
+//   scheduler.createProcess(
+//     new RestroomRequestHandler('RestroomRequestHandler', () =>
+//       scheduler.uniform(1, 4)
+//     )
+//   )
+// )
 
 // ---------- Simulando o sistema ----------
 
 // Simula o sistema até esgotar
 //scheduler.simulateOneStep()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
-scheduler.simulate()
+scheduler.simulateOneStep()
+// scheduler.simulateOneStep()
+// scheduler.simulateOneStep()
+// scheduler.simulateOneStep()
+// scheduler.simulateOneStep()
+// scheduler.simulateOneStep()
+// scheduler.simulateOneStep()
+// scheduler.simulateOneStep()
+// scheduler.simulateOneStep()

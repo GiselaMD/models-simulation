@@ -40,7 +40,6 @@ export class Scheduler {
    * @returns Inicializa o processo.
    */
   public startProcessNow(process: Process) {
-    console.log('CRIANDO PROCESSO: ' + process.name)
     this.isDebbuger && console.log('startProcessNow, com id:', process.getId())
     this.startProcessAt(process, this.time)
   }
@@ -86,7 +85,7 @@ export class Scheduler {
       }
     }
     // TODO: remover depois
-    console.log(`processSchedule`, this.processSchedule)
+    console.log(`processSchedule startProcessAt`, this.processSchedule)
   }
 
   /**
@@ -111,10 +110,12 @@ export class Scheduler {
   private executeSimulation() {
     // Pega o primeiro tempo disponível no modelo
     const [time] = Object.keys(this.processSchedule).map(parseFloat).sort()
+
+    console.log('processSchedule', this.processSchedule)
+
     // Atualiza o tempo do modelo pro tempo atual do processo
     this.time = time
-    console.log('TEMPO ATUAL PROCESSO: ' + this.time)
-
+    console.log('TEMPO ATUAL: ' + this.time)
     const processes = this.processSchedule[time]
 
     // Varre os processos do tempo "time"
@@ -124,35 +125,42 @@ export class Scheduler {
 
       // Valida se é o ínicio ou fim da execução do processo
       if (type === 'start') {
-        const continueProcess = process?.executeOnStart()
-        if (continueProcess == true) {
-          const duration = process?.duration() || this.time
-
-          const endTime = this.time + duration
-          // Reagenda o fim do processo baseado no tempo de duração dele
-          if (this.processSchedule[endTime]) {
-            this.processSchedule[endTime] = [
-              ...this.processSchedule[endTime],
-              { process, type: 'end' },
+        if (!process.canExecute()) {
+          // Reagenda o início do processo baseado no tempo de duração dele
+          if (this.processSchedule[this.time + 1]) {
+            this.processSchedule[this.time + 1] = [
+              ...this.processSchedule[this.time + 1],
+              { process, type: 'start' },
             ]
           } else {
-            this.processSchedule[endTime] = [{ process, type: 'end' }]
+            this.processSchedule[this.time + 1] = [{ process, type: 'start' }]
           }
-        } else {
-          const endTime = this.time + 1
-          // Reagenda o inicio do proceso
+          continue
+        }
+
+        const continueProcess = process.executeOnStart()
+        const duration = process?.duration() || this.time
+
+        const endTime = this.time + duration
+        // Reagenda o fim do processo baseado no tempo de duração dele
+        if (this.processSchedule[endTime]) {
           this.processSchedule[endTime] = [
             ...this.processSchedule[endTime],
-            { process, type: 'start' },
+            { process, type: 'end' },
           ]
+        } else {
+          this.processSchedule[endTime] = [{ process, type: 'end' }]
         }
       } else {
         process?.executeOnEnd()
       }
     }
+
     // após processar todos dentro do tempo "time" remove a chave da estrutura
     // para na próxima iteração pegar os processos do próximo tempo
-    delete this.processSchedule[time]
+    if (Object.values(this.processSchedule[time]).length === 0) {
+      delete this.processSchedule[time]
+    }
   }
 
   /**
@@ -164,6 +172,7 @@ export class Scheduler {
     while (!this.isProcessScheduleEmpty()) {
       this.executeSimulation()
     }
+    console.log('Finalizou simulate()')
   }
 
   /**
