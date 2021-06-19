@@ -1,13 +1,16 @@
 import { RandVarGen } from 'random-variate-generators'
 import { Entity } from './entity'
-import { EntitySet, Mode } from './entitySet'
+import { EntitySet } from './entitySet'
 import { Process } from './process'
 import { Resource } from './resource'
 import { uuid } from 'uuidv4'
 import { randomInt } from 'crypto'
+import promptSync from 'prompt-sync'
+
+const prompt = promptSync({ sigint: true })
 
 type ProcessItem = {
-  process: Process
+  engineProcess: Process
   type: string
 }
 interface ProcessSchedule {
@@ -64,10 +67,10 @@ export class Scheduler {
    * @param absoluteTime
    * @returns o agendamento do começo processo em um momento específico
    */
-  public startProcessAt(process: Process, absoluteTime: number) {
+  public startProcessAt(engineProcess: Process, absoluteTime: number) {
     this.isDebbuger &&
       console.log(
-        `startProcessAt, com id ${process.getId()} e absoluteTime: ${absoluteTime}`
+        `startProcessAt, com id ${engineProcess.getId()} e absoluteTime: ${absoluteTime}`
       )
 
     if (this.processSchedule[absoluteTime]) {
@@ -75,13 +78,13 @@ export class Scheduler {
         ...this.processSchedule,
         [absoluteTime]: [
           ...this.processSchedule[absoluteTime],
-          { process, type: 'start' },
+          { engineProcess, type: 'start' },
         ],
       }
     } else {
       this.processSchedule = {
         ...this.processSchedule,
-        [absoluteTime]: [{ process, type: 'start' }],
+        [absoluteTime]: [{ engineProcess, type: 'start' }],
       }
     }
     // TODO: remover depois
@@ -107,7 +110,7 @@ export class Scheduler {
     return true
   }
 
-  private executeSimulation() {
+  private async executeSimulation() {
     // Pega o primeiro tempo disponível no modelo
     const [time] = Object.keys(this.processSchedule).map(parseFloat).sort()
 
@@ -120,39 +123,52 @@ export class Scheduler {
 
     // Varre os processos do tempo "time"
     while (processes.length > 0) {
+      if (this.isDebbuger) {
+        const continueResult = prompt(
+          'Deseja continuar (Qualquer tecla para continuar, "N" para encerrar)? '
+        )
+
+        if (continueResult.toUpperCase() === 'N') {
+          console.log('Encerrando a rede...')
+          process.exit(0)
+        }
+      }
+
       // Remove o primeiro processo do array
-      const { process, type } = processes.shift() as ProcessItem
+      const { engineProcess, type } = processes.shift() as ProcessItem
 
       // Valida se é o ínicio ou fim da execução do processo
       if (type === 'start') {
-        if (!process.canExecute()) {
+        if (!engineProcess.canExecute()) {
           // Reagenda o início do processo baseado no tempo de duração dele
           if (this.processSchedule[this.time + 1]) {
             this.processSchedule[this.time + 1] = [
               ...this.processSchedule[this.time + 1],
-              { process, type: 'start' },
+              { engineProcess, type: 'start' },
             ]
           } else {
-            this.processSchedule[this.time + 1] = [{ process, type: 'start' }]
+            this.processSchedule[this.time + 1] = [
+              { engineProcess, type: 'start' },
+            ]
           }
           continue
         }
 
-        const continueProcess = process.executeOnStart()
-        const duration = process?.duration() || this.time
+        engineProcess.executeOnStart()
+        const duration = engineProcess?.duration() || this.time
 
         const endTime = this.time + duration
         // Reagenda o fim do processo baseado no tempo de duração dele
         if (this.processSchedule[endTime]) {
           this.processSchedule[endTime] = [
             ...this.processSchedule[endTime],
-            { process, type: 'end' },
+            { engineProcess, type: 'end' },
           ]
         } else {
-          this.processSchedule[endTime] = [{ process, type: 'end' }]
+          this.processSchedule[endTime] = [{ engineProcess, type: 'end' }]
         }
       } else {
-        process?.executeOnEnd()
+        engineProcess?.executeOnEnd()
       }
     }
 
