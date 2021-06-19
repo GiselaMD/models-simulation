@@ -111,7 +111,9 @@ export class Scheduler {
 
   private async executeSimulation() {
     // Pega o primeiro tempo disponível no modelo
-    const [time] = Object.keys(this.processSchedule).map(parseFloat).sort()
+    const [time] = Object.keys(this.processSchedule)
+      .map(parseFloat)
+      .sort((a, b) => a - b)
 
     // Atualiza o tempo do modelo pro tempo atual do processo
     this.time = time

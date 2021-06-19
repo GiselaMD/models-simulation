@@ -133,7 +133,7 @@ scheduler.startProcessNow(
 // ---------- Simulando o sistema ----------
 
 // Simula o sistema até esgotar
-//scheduler.simulateOneStep()
+// scheduler.sim`ulateOneStep()
 scheduler.simulate()
 // scheduler.simulateOneStep()
 // scheduler.simulateOneStep()
