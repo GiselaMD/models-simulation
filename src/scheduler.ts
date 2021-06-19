@@ -225,7 +225,8 @@ export class Scheduler {
 
         return line + ' ]'
       })
-      console.log(colors.green('processSchedule --> '), printSchedule)
+      // Tabela com todas informações dos processos (nome, ID e type)
+      //console.log(colors.green('processSchedule --> '), printSchedule)
       console.log(this.processSchedule)
       // console.log(
       //   'processSchedule[time]',
@@ -444,7 +445,7 @@ export class Scheduler {
    */
   public uniform(minValue: number, maxValue: number) {
     const rvg = new RandVarGen()
-    // TODO: Não funciona, resulta em 1.6428710408508778.
+    // BUG: Não funciona, resulta em 1.6428710408508778.
     //const result = rvg.uniform(minValue, maxValue)
     const result = randomInt(minValue, maxValue)
     this.isDebbuger &&

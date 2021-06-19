@@ -8,10 +8,6 @@ export class RestroomRequestHandler extends Process {
   }
 
   public canExecute() {
-    // TODO: Algo errado
-    // TODO: Liberar banheiro
-    // TODO: Melhorar nome QueueTableHandler-M
-    // TODO: Cliente feliz separado por \n
     const qtdAtendentesBanheiro =
       (waiterPetriNet.petriNet
         ?.getLugarByLabel('substituirCaixa')

@@ -1,6 +1,7 @@
 import { randomInt } from 'crypto'
 import {
   atendenteCx1,
+  atendenteCx2,
   filaDeClientesNoCaixa1,
   filaDeClientesNoCaixa2,
   scheduler,
@@ -20,7 +21,11 @@ export class ClientHandler extends Process {
     //console.log(this.name + ': Cliente entrou no restaurante ')
     //console.log('Cliente --> ' + cliente)
 
-    if (filaDeClientesNoCaixa1.getSize() <= filaDeClientesNoCaixa2.getSize()) {
+    if (
+      filaDeClientesNoCaixa1.getSize() <= filaDeClientesNoCaixa2.getSize() &&
+      atendenteCx1.getQuantity() - atendenteCx1.used <=
+        atendenteCx2.getQuantity() - atendenteCx2.used
+    ) {
       filaDeClientesNoCaixa1.insert(
         scheduler.createEntity(new Entity({ name: cliente }))
       )

@@ -76,7 +76,7 @@ export class QueueTableHandler extends Process {
       )
       filaGarcomLimpaMesa4.insert(filaDeClientesNaMesa4.remove() as Entity)
     }
-    waiterPetriNet.petriNet?.getLugarByLabel('higienizandoMesa')?.insereToken(1)
+    waiterPetriNet.petriNet?.getLugarByLabel('clienteVaiSentar')?.insereToken(1)
     scheduler.startProcessNow(
       scheduler.createProcess(
         new WaiterPetriNet(

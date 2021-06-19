@@ -25,6 +25,6 @@ export class EatingTableHandler extends Process {
       filaDeClientesComendoNaMesa4.remove()
       mesas4Livres.release(1)
     }
-    console.log(colors.rainbow('Mais clientes satisfeito!!!'))
+    console.log(colors.rainbow('\nMais clientes satisfeito!!!\n'))
   }
 }

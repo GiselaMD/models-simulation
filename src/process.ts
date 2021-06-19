@@ -1,5 +1,3 @@
-import { Scheduler } from './scheduler'
-
 export class Process {
   name: string
   id: string | null

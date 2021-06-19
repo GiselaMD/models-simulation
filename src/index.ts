@@ -14,8 +14,9 @@ waiterPetriNet.createPetriNet()
 waiterPetriNet.petriNet?.getLugarByLabel('garcomLivre')?.insereToken(5)
 
 //TODO: Resolver o problema do warning.
-//TODO: Testar e validar o trabalho.
 //TODO: Revisar o tempo do duration de todos os processos.
+//TODO: Melhorar nome QueueTableHandler-M
+//TODO: Cliente feliz separado por \n
 
 // ------------------------------ Recursos do sistema ------------------------------
 
@@ -133,13 +134,5 @@ scheduler.startProcessNow(
 // ---------- Simulando o sistema ----------
 
 // Simula o sistema até esgotar
-// scheduler.sim`ulateOneStep()
-scheduler.simulate()
-// scheduler.simulateOneStep()
-// scheduler.simulateOneStep()
-// scheduler.simulateOneStep()
-// scheduler.simulateOneStep()
-// scheduler.simulateOneStep()
-// scheduler.simulateOneStep()
-// scheduler.simulateOneStep()
-// scheduler.simulateOneStep()
+//scheduler.simulate()
+scheduler.simulateOneStep()

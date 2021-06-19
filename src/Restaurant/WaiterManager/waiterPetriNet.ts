@@ -26,9 +26,7 @@ export class WaiterPetriNet extends Process {
   }
 
   public executeOnStart() {
-    console.log(color.rainbow('Tabela PetriNet'))
     waiterPetriNet.petriNet?.atualizaStatusTransicoes()
-    waiterPetriNet.petriNet?.exibeMenu()
     waiterPetriNet.petriNet?.executaCiclo()
     console.log(
       color.blue(
@@ -92,7 +90,7 @@ export class WaiterPetriNet extends Process {
       }
       scheduler.startProcessNow(
         scheduler.createProcess(
-          new WaiterOrderHandler('WaiterOrderHandler-' + this.name, () => 1)
+          new WaiterOrderHandler('WaiterOrderHandler-' + this.mesa, () => 1)
         )
       )
     }

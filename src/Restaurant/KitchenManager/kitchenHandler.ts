@@ -6,6 +6,7 @@ import {
 import { Entity } from '../../entity'
 import { Process } from '../../process'
 import color from 'colors'
+import { Order } from './order'
 
 export class KitchenHandler extends Process {
   pedidoSendoPreparado: Entity | undefined
@@ -20,6 +21,21 @@ export class KitchenHandler extends Process {
         `FILA DE PEDIDOS ENTRANDO COZINHA ${filaDePedidosEntrandoCozinha.getSize()}\n`
       )
     )
+    // TODO: Remover, apenas para teste
+    console.log(filaDePedidosEntrandoCozinha.getSize())
+    for (let pedido of filaDePedidosEntrandoCozinha.getEntitySet()) {
+      //filaDePedidosEsperandoEntrega.getEntitySet().forEach(pedido => {
+      let order = pedido as Order
+      console.log(
+        color.green(
+          'ID do cliente dono do pedido ' +
+            order.getIdCliente() +
+            'ID pedido ' +
+            order.getId()
+        )
+      )
+    }
+    console.log('KDDDDDDDDDDDdd')
 
     if (!filaDePedidosEntrandoCozinha.isEmpty() && cozinheiros.canAllocate(1)) {
       return true
