@@ -40,6 +40,14 @@ export class Resource {
   }
 
   /**
+   * getQuantity()
+   * @returns Resource quantity
+   */
+  public getQuantity() {
+    return this.quantity
+  }
+
+  /**
    * canAllocate()
    * @param quantity de recursos na fila
    * @returns se conseguiu alocar ou não

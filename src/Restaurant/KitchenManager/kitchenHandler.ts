@@ -13,16 +13,17 @@ export class KitchenHandler extends Process {
     super(name, duration)
   }
 
-  public executeOnStart() {
-    if (!filaDePedidosEntrandoCozinha.isEmpty() && cozinheiros.allocate(1)) {
-      // se conseguir alocar um atendente, inicio do cozinhamento.
-      console.log('inicio do cozinhamento')
-      this.pedidoSendoPreparado =
-        filaDePedidosEntrandoCozinha.remove() as Entity
-    } else {
-      return false
+  public canExecute() {
+    if (!filaDePedidosEntrandoCozinha.isEmpty() && cozinheiros.canAllocate(1)) {
+      return true
     }
-    return true
+    return false
+  }
+
+  public executeOnStart() {
+    console.log('inicio do cozimento')
+    cozinheiros.allocate(1)
+    this.pedidoSendoPreparado = filaDePedidosEntrandoCozinha.remove() as Entity
   }
 
   public executeOnEnd() {

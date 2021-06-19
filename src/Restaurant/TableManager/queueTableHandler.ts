@@ -22,30 +22,38 @@ export class QueueTableHandler extends Process {
     super(name, duration)
   }
 
-  public executeOnStart() {
+  public canExecute() {
     if (this.name == 'QueueTableHandler-balcao') {
-      if (!filaDeClientesNoBalcao.isEmpty() && bancosLivres.allocate(1)) {
-        filaGarcomLimpaBalcao.insert(filaDeClientesNoBalcao.remove() as Entity)
-        this.mesa = 'balcao'
-      } else {
-        return false
+      if (!filaDeClientesNoBalcao.isEmpty() && bancosLivres.canAllocate(1)) {
+        return true
       }
     } else if (this.name == 'QueueTableHandler-M2') {
-      if (!filaDeClientesNaMesa2.isEmpty() && mesas2Livres.allocate(1)) {
-        filaGarcomLimpaMesa2.insert(filaDeClientesNaMesa2.remove() as Entity)
-        this.mesa = 'M2'
-      } else {
-        return false
+      if (!filaDeClientesNaMesa2.isEmpty() && mesas2Livres.canAllocate(1)) {
+        return true
       }
     } else {
-      if (!filaDeClientesNaMesa4.isEmpty() && mesas4Livres.allocate(1)) {
-        filaGarcomLimpaMesa4.insert(filaDeClientesNaMesa4.remove() as Entity)
-        this.mesa = 'M4'
-      } else {
-        return false
+      if (!filaDeClientesNaMesa4.isEmpty() && mesas4Livres.canAllocate(1)) {
+        return true
       }
     }
+    return false
+  }
 
+  public executeOnStart() {
+    console.log('Está no', this.name)
+    if (this.name == 'QueueTableHandler-balcao') {
+      this.mesa = 'balcao'
+      bancosLivres.allocate(1)
+      filaGarcomLimpaBalcao.insert(filaDeClientesNoBalcao.remove() as Entity)
+    } else if (this.name == 'QueueTableHandler-M2') {
+      this.mesa = 'M2'
+      mesas2Livres.allocate(1)
+      filaGarcomLimpaMesa2.insert(filaDeClientesNaMesa2.remove() as Entity)
+    } else {
+      this.mesa = 'M4'
+      mesas4Livres.allocate(1)
+      filaGarcomLimpaMesa4.insert(filaDeClientesNaMesa4.remove() as Entity)
+    }
     waiterPetriNet.petriNet?.getLugarByLabel('higienizandoMesa')?.insereToken(1)
     scheduler.startProcessNow(
       scheduler.createProcess(
@@ -56,6 +64,5 @@ export class QueueTableHandler extends Process {
         )
       )
     )
-    return true
   }
 }

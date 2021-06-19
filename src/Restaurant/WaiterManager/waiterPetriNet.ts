@@ -81,9 +81,7 @@ export class WaiterPetriNet extends Process {
       }
       scheduler.startProcessNow(
         scheduler.createProcess(
-          new WaiterOrderHandler('WaiterOrderHandler-' + this.name, () =>
-            scheduler.uniform(1, 1)
-          )
+          new WaiterOrderHandler('WaiterOrderHandler-' + this.name, () => 1)
         )
       )
     }

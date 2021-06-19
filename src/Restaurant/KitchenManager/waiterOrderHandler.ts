@@ -26,14 +26,14 @@ export class WaiterOrderHandler extends Process {
         let order = pedido as Order
         if ((cliente.getId() as string) == order.getIdCliente()) {
           filaDePedidosEsperandoEntrega.removeById(order.getId() as string)
-          return true
+          return true // Pedido do cliente está pronto
         }
       }
     }
-    return false
+    return false // Pedido do cliente não está pronto
   }
 
-  public executeOnStart() {
+  public canExecute() {
     if (!filaDePedidosEsperandoEntrega.isEmpty()) {
       if (this.name == 'WaiterOrderHandler-balcao') {
         if (!this.searchOrder(filaDeClientesEsperandoPedidoNoBalcao)) {
@@ -51,9 +51,12 @@ export class WaiterOrderHandler extends Process {
         }
         this.mesa = 'M4'
       }
-    } else {
-      return false
+      return true
     }
+    return false
+  }
+
+  public executeOnStart() {
     waiterPetriNet.petriNet?.getLugarByLabel('pedidoPronto')?.insereToken(1)
     scheduler.startProcessNow(
       scheduler.createProcess(
@@ -64,6 +67,5 @@ export class WaiterOrderHandler extends Process {
         )
       )
     )
-    return true
   }
 }

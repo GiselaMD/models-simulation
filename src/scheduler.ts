@@ -365,6 +365,9 @@ export class Scheduler {
     const rvg = new RandVarGen()
     // TODO: Não funciona, resulta em 1.6428710408508778.
     //const result = rvg.uniform(minValue, maxValue)
+    console.log(
+      `Calculou uniform com minValue = ${minValue}, maxValue = ${maxValue}`
+    )
     const result = randomInt(minValue, maxValue)
     this.isDebbuger &&
       console.log(

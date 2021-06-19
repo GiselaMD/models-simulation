@@ -24,27 +24,33 @@ export class CachierHandler extends Process {
     this.numCaixa = numCaixa
   }
 
+  public canExecute() {
+    if (this.numCaixa == 1) {
+      if (!filaDeClientesNoCaixa1.isEmpty() && atendenteCx1.canAllocate(1)) {
+        return true
+      }
+    } else {
+      if (!filaDeClientesNoCaixa2.isEmpty() && atendenteCx2.canAllocate(1)) {
+        return true
+      }
+    }
+    return false
+  }
+
   public executeOnStart() {
     // se conseguir alocar um atendente, inicia o atendimento.
     if (this.numCaixa == 1) {
-      if (!filaDeClientesNoCaixa1.isEmpty() && atendenteCx1.allocate(1)) {
-        console.log(
-          this.name + ': Iniciando atendimento no caixa ' + this.numCaixa
-        )
-        this.clienteSendoAtendidoNoCaixa =
-          filaDeClientesNoCaixa1.remove() as Entity
-      } else {
-        return false
-      }
+      console.log(
+        this.name + ': Iniciando atendimento no caixa ' + this.numCaixa
+      )
+      atendenteCx1.allocate(1)
+      this.clienteSendoAtendidoNoCaixa =
+        filaDeClientesNoCaixa1.remove() as Entity
     } else {
-      if (!filaDeClientesNoCaixa2.isEmpty() && atendenteCx2.allocate(1)) {
-        this.clienteSendoAtendidoNoCaixa =
-          filaDeClientesNoCaixa2.remove() as Entity
-      } else {
-        return false
-      }
+      atendenteCx2.allocate(1)
+      this.clienteSendoAtendidoNoCaixa =
+        filaDeClientesNoCaixa2.remove() as Entity
     }
-    return true
   }
 
   public executeOnEnd() {
@@ -69,9 +75,7 @@ export class CachierHandler extends Process {
       filaDeClientesNoBalcao.insert(this.clienteSendoAtendidoNoCaixa as Entity)
       scheduler.startProcessNow(
         scheduler.createProcess(
-          new QueueTableHandler('QueueTableHandler-balcao', () =>
-            scheduler.uniform(1, 1)
-          )
+          new QueueTableHandler('QueueTableHandler-balcao', () => 1)
         )
       )
     } else if (nomeCliente == 'cliente2') {
@@ -79,9 +83,7 @@ export class CachierHandler extends Process {
       filaDeClientesNaMesa2.insert(this.clienteSendoAtendidoNoCaixa as Entity)
       scheduler.startProcessNow(
         scheduler.createProcess(
-          new QueueTableHandler('QueueTableHandler-M2', () =>
-            scheduler.uniform(1, 1)
-          )
+          new QueueTableHandler('QueueTableHandler-M2', () => 1)
         )
       )
     } else {
@@ -89,9 +91,7 @@ export class CachierHandler extends Process {
       filaDeClientesNaMesa4.insert(this.clienteSendoAtendidoNoCaixa as Entity)
       scheduler.startProcessNow(
         scheduler.createProcess(
-          new QueueTableHandler('QueueTableHandler-M4', () =>
-            scheduler.uniform(1, 1)
-          )
+          new QueueTableHandler('QueueTableHandler-M4', () => 1)
         )
       )
     }
