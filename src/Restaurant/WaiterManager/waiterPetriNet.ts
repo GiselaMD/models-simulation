@@ -15,6 +15,7 @@ import { Entity } from '../../entity'
 import { Process } from '../../process'
 import { WaiterOrderHandler } from '../KitchenManager/waiterOrderHandler'
 import { EatingTableHandler } from '../TableManager/eatingTableHandler'
+import color from 'colors'
 
 export class WaiterPetriNet extends Process {
   local: string = ''
@@ -26,7 +27,6 @@ export class WaiterPetriNet extends Process {
 
   public executeOnStart() {
     waiterPetriNet.petriNet?.executaCiclo()
-    return true
   }
 
   public executeOnEnd() {
@@ -36,12 +36,12 @@ export class WaiterPetriNet extends Process {
         ?.insereToken(1)
     } else if (this.local == 'levandoPedido') {
       waiterPetriNet.petriNet?.getLugarByLabel('pedidoEntregue')?.insereToken(1)
-      if (this.name == 'WaiterPetriNet-balcao') {
+      if (this.name == 'WaiterPetriNet-DeliverOrder-balcao') {
         filaDeClientesComendoNoBalcao.insert(
           filaDeClientesEsperandoPedidoNoBalcao.remove() as Entity
         )
         this.mesa = 'balcao'
-      } else if (this.name == 'WaiterPetriNet-M2') {
+      } else if (this.name == 'WaiterPetriNet-DeliverOrder-M2') {
         filaDeClientesComendoNaMesa2.insert(
           filaDeClientesEsperandoPedidoNaMesa2.remove() as Entity
         )
@@ -63,12 +63,12 @@ export class WaiterPetriNet extends Process {
       waiterPetriNet.petriNet
         ?.getLugarByLabel('mesaHigienizada')
         ?.insereToken(1)
-      if (this.name == 'WaiterPetriNet-balcao') {
+      if (this.name == 'WaiterPetriNet-CleanTable-balcao') {
         filaDeClientesEsperandoPedidoNoBalcao.insert(
           filaGarcomLimpaBalcao.remove() as Entity
         )
         this.mesa = 'balcao'
-      } else if (this.name == 'WaiterPetriNet-M2') {
+      } else if (this.name == 'WaiterPetriNet-CleanTable-M2') {
         filaDeClientesEsperandoPedidoNaMesa2.insert(
           filaGarcomLimpaMesa2.remove() as Entity
         )

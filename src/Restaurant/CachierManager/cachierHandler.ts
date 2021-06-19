@@ -58,7 +58,7 @@ export class CachierHandler extends Process {
     const cliente = this.clienteSendoAtendidoNoCaixa as Entity
     filaDePedidosEntrandoCozinha.insert(
       scheduler.createEntity(
-        new Order('pedido', cliente.getId() as string) as Entity
+        new Order('Order', cliente.getId() as string) as Entity
       )
     )
 

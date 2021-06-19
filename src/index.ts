@@ -119,22 +119,22 @@ export const filaDeClientesComendoNaMesa4 = scheduler.createEntitySet(
 
 scheduler.startProcessNow(
   scheduler.createProcess(
-    new ClientHandler('ProcessoCliente', () => scheduler.uniform(1, 4))
+    new ClientHandler('ClientHandler', () => scheduler.uniform(1, 4))
   )
 )
-// scheduler.startProcessNow(
-//   scheduler.createProcess(
-//     new RestroomRequestHandler('RestroomRequestHandler', () =>
-//       scheduler.uniform(1, 4)
-//     )
-//   )
-// )
+scheduler.startProcessNow(
+  scheduler.createProcess(
+    new RestroomRequestHandler('RestroomRequestHandler', () =>
+      scheduler.uniform(1, 4)
+    )
+  )
+)
 
 // ---------- Simulando o sistema ----------
 
 // Simula o sistema até esgotar
 //scheduler.simulateOneStep()
-scheduler.simulateOneStep()
+scheduler.simulate()
 // scheduler.simulateOneStep()
 // scheduler.simulateOneStep()
 // scheduler.simulateOneStep()

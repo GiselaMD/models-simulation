@@ -8,7 +8,11 @@ export class RestroomRequestHandler extends Process {
   }
 
   public canExecute() {
-    const qtdBanheiro =
+    // TODO: Algo errado
+    // TODO: Liberar banheiro
+    // TODO: Melhorar nome QueueTableHandler-M
+    // TODO: Print resources do garçom (token), mesa, caixa
+    const qtdAtendentesBanheiro =
       (waiterPetriNet.petriNet
         ?.getLugarByLabel('substituirCaixa')
         ?.getTokens() as number) +
@@ -17,7 +21,7 @@ export class RestroomRequestHandler extends Process {
         ?.getTokens() as number)
 
     if (
-      qtdBanheiro >=
+      qtdAtendentesBanheiro >=
       atendenteCx1.getQuantity() + atendenteCx2.getQuantity()
     ) {
       return false
@@ -30,9 +34,9 @@ export class RestroomRequestHandler extends Process {
     scheduler.startProcessNow(
       scheduler.createProcess(
         new WaiterPetriNet(
-          'WaiterPetriNet',
+          'WaiterPetriNet-RestroomRequestHandler',
           () => scheduler.uniform(1, 4),
-          'levandoPedido'
+          'garcomNoCaixa'
         )
       )
     )

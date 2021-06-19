@@ -6,6 +6,7 @@ import { Resource } from './resource'
 import { uuid } from 'uuidv4'
 import { randomInt } from 'crypto'
 import promptSync from 'prompt-sync'
+import colors from 'colors'
 
 const prompt = promptSync({ sigint: true })
 
@@ -87,8 +88,6 @@ export class Scheduler {
         [absoluteTime]: [{ engineProcess, type: 'start' }],
       }
     }
-    // TODO: remover depois
-    console.log(`processSchedule startProcessAt`, this.processSchedule)
   }
 
   /**
@@ -114,18 +113,18 @@ export class Scheduler {
     // Pega o primeiro tempo disponível no modelo
     const [time] = Object.keys(this.processSchedule).map(parseFloat).sort()
 
-    console.log('processSchedule', this.processSchedule)
-
     // Atualiza o tempo do modelo pro tempo atual do processo
     this.time = time
-    console.log('TEMPO ATUAL: ' + this.time)
-    const processes = this.processSchedule[time]
+    console.log(colors.bgBlue('TEMPO ATUAL: ' + this.time))
+    // const processes = this.processSchedule[time]
 
     // Varre os processos do tempo "time"
-    while (processes.length > 0) {
+    while (this.processSchedule[time].length > 0) {
       if (this.isDebbuger) {
         const continueResult = prompt(
-          'Deseja continuar (Qualquer tecla para continuar, "N" para encerrar)? '
+          colors.yellow(
+            '\nDeseja continuar (Qualquer tecla para continuar, "N" para encerrar)? \n'
+          )
         )
 
         if (continueResult.toUpperCase() === 'N') {
@@ -134,12 +133,30 @@ export class Scheduler {
         }
       }
 
+      console.log(
+        colors.cyan(
+          `Tamanho ANTES dos processos do tempo ${this.time} = ${this.processSchedule[time].length}`
+        )
+      )
+
       // Remove o primeiro processo do array
-      const { engineProcess, type } = processes.shift() as ProcessItem
+      const { engineProcess, type } = this.processSchedule[
+        time
+      ].shift() as ProcessItem
+      // const [{ engineProcess, type }] = processes.splice(0, 1)
 
       // Valida se é o ínicio ou fim da execução do processo
       if (type === 'start') {
         if (!engineProcess.canExecute()) {
+          this.isDebbuger &&
+            console.log(
+              colors.red(
+                `\tSem recursos para executar processo: --> Process ${
+                  engineProcess.name
+                } com id ${engineProcess.getId()} e time: ${time}`
+              )
+            )
+
           // Reagenda o início do processo baseado no tempo de duração dele
           if (this.processSchedule[this.time + 1]) {
             this.processSchedule[this.time + 1] = [
@@ -157,6 +174,15 @@ export class Scheduler {
         engineProcess.executeOnStart()
         const duration = engineProcess?.duration() || this.time
 
+        this.isDebbuger &&
+          console.log(
+            `\t${colors.green('ExecuteOnStart():')} --> Process ${colors.yellow(
+              `${engineProcess.name}`
+            )} com id ${colors.yellow(
+              `${engineProcess.getId()}`
+            )} e time:  ${colors.yellow(`${time}`)}`
+          )
+
         const endTime = this.time + duration
         // Reagenda o fim do processo baseado no tempo de duração dele
         if (this.processSchedule[endTime]) {
@@ -168,8 +194,41 @@ export class Scheduler {
           this.processSchedule[endTime] = [{ engineProcess, type: 'end' }]
         }
       } else {
-        engineProcess?.executeOnEnd()
+        engineProcess.executeOnEnd()
+
+        this.isDebbuger &&
+          console.log(
+            `\t${colors.green('ExecuteOnEnd():')}  --> Process ${colors.yellow(
+              `${engineProcess.name}`
+            )} com id ${colors.yellow(
+              `${engineProcess.getId()}`
+            )} e time:  ${colors.yellow(`${time}`)}`
+          )
       }
+
+      console.log(
+        colors.cyan(
+          `Tamanho DEPOIS dos processos do tempo ${this.time} = ${this.processSchedule[time].length}`
+        )
+      )
+
+      const printSchedule = Object.keys(this.processSchedule).map(key => {
+        const elements: ProcessItem[] = this.processSchedule[key]
+
+        let line = `${key} -> [`
+
+        for (const element of elements) {
+          line += `{ ${element.engineProcess.name} | ${element.engineProcess.id} | Type: ${element.type} } | `
+        }
+
+        return line + ' ]'
+      })
+      console.log(colors.green('processSchedule --> '), printSchedule)
+      console.log(this.processSchedule)
+      // console.log(
+      //   'processSchedule[time]',
+      //   JSON.stringify(this.processSchedule[time])
+      // )
     }
 
     // após processar todos dentro do tempo "time" remove a chave da estrutura
@@ -266,7 +325,7 @@ export class Scheduler {
     const entity = this.entityList.find(entity => entity.getId() === id)
 
     if (!entity) {
-      console.error(`getEntity: entity com ID ${id} nao existe`)
+      console.error(colors.red(`getEntity: entity com ID ${id} nao existe`))
     }
 
     this.isDebbuger && console.log(`getEntity, com id ${id}`)
@@ -296,7 +355,7 @@ export class Scheduler {
     const resource = this.resourceList.find(resource => resource.getId() === id)
 
     if (!resource) {
-      console.error(`getResource: resource com ID ${id} nao existe`)
+      console.error(colors.red(`getResource: resource com ID ${id} nao existe`))
     }
 
     this.isDebbuger && console.log(`getResource, com id ${id}`)
@@ -327,7 +386,9 @@ export class Scheduler {
     )
 
     if (!process) {
-      console.error(`getProcess: Processo com ID ${processId} nao existe`)
+      console.error(
+        colors.red(`getProcess: Processo com ID ${processId} nao existe`)
+      )
     }
 
     this.isDebbuger && console.log(`getProcess, com id ${processId}`)
@@ -361,7 +422,9 @@ export class Scheduler {
     )
 
     if (!entitySet) {
-      console.error(`getEntitySet: entitySet com ID ${id} nao existe`)
+      console.error(
+        colors.red(`getEntitySet: entitySet com ID ${id} nao existe`)
+      )
     }
 
     this.isDebbuger && console.log(`getEntitySet, com id ${id}`)
@@ -381,9 +444,6 @@ export class Scheduler {
     const rvg = new RandVarGen()
     // TODO: Não funciona, resulta em 1.6428710408508778.
     //const result = rvg.uniform(minValue, maxValue)
-    console.log(
-      `Calculou uniform com minValue = ${minValue}, maxValue = ${maxValue}`
-    )
     const result = randomInt(minValue, maxValue)
     this.isDebbuger &&
       console.log(

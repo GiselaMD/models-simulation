@@ -1,5 +1,6 @@
 import Table from 'cli-table'
 import prompt from 'prompt-sync'
+import colors from 'colors'
 
 import { Conexao } from './conexao'
 import { Lugar } from './lugar'
@@ -100,7 +101,7 @@ export class RedePetri {
   public setTransicaoInativa(id: number) {
     const transicao = this.getTransicao(id)
     if (!transicao) {
-      console.error('Transição não encontrada')
+      console.error(colors.red('Transição não encontrada'))
     }
     transicao?.setStatus(false)
   }
@@ -108,7 +109,7 @@ export class RedePetri {
   public setTransicaoAtiva(id: number) {
     const transicao = this.getTransicao(id)
     if (!transicao) {
-      console.error('Transição não encontrada')
+      console.error(colors.red('Transição não encontrada'))
     }
     transicao?.setStatus(true)
   }
@@ -227,7 +228,7 @@ export class RedePetri {
   public quantosTokens(idLugar: number): number | undefined {
     let lugar = this.getLugar(idLugar)
     if (!lugar) {
-      console.error('Lugar não encontrado')
+      console.error(colors.red('Lugar não encontrado'))
     }
     return lugar?.getTokens()
   }
@@ -262,9 +263,9 @@ export class RedePetri {
     )
 
     if (transicoesAtivas.length < 1) {
-      console.log(
-        'Não é possível executar um ciclo, pois nenhuma transição está ativa'
-      )
+      // console.log(
+      //   'Não é possível executar um ciclo, pois nenhuma transição está ativa'
+      // )
       return
     }
 

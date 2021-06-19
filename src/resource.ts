@@ -80,7 +80,7 @@ export class Resource {
    * @returns se conseguiu liberar ou não
    */
   public release(quantity: number) {
-    if (quantity > this.quantity - this.used) {
+    if (quantity >= this.used) {
       this.used -= quantity
       this.timeAllocated += this.timeScheduler() - this.timeAllocationStart
       return true

@@ -58,7 +58,7 @@ export class QueueTableHandler extends Process {
     scheduler.startProcessNow(
       scheduler.createProcess(
         new WaiterPetriNet(
-          'WaiterPetriNet-' + this.mesa,
+          'WaiterPetriNet-CleanTable-' + this.mesa,
           () => scheduler.uniform(1, 4),
           'higienizandoMesa'
         )

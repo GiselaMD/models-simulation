@@ -1,3 +1,4 @@
+import colors from 'colors'
 import { Entity } from './entity'
 
 export const enum Mode {
@@ -89,12 +90,12 @@ export class EntitySet {
    */
   public insert(entity: Entity) {
     if (this.isFull()) {
-      console.error('EntitySet is full')
+      console.error(colors.red('EntitySet is full'))
       return
     }
     if (!entity.id) {
       console.log(entity.getName())
-      console.error('Id not setted in entity')
+      console.error(colors.red('Id not setted in entity'))
       return
     }
 
@@ -116,7 +117,7 @@ export class EntitySet {
     const entityRemoved = this.set.pop()
 
     if (!entityRemoved || !entityRemoved.id) {
-      console.error('Unable to remove Entity')
+      console.error(colors.red('Unable to remove Entity'))
       return
     }
 
@@ -138,7 +139,7 @@ export class EntitySet {
     const [removed] = this.set.splice(index, 1)
 
     if (!removed || !removed.id) {
-      console.error('Unable to remove Entity')
+      console.error(colors.red('Unable to remove Entity'))
       return null
     }
     this.updateSetSize()

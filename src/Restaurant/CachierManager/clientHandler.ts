@@ -35,7 +35,7 @@ export class ClientHandler extends Process {
     // Se auto agenda
     scheduler.startProcessNow(
       scheduler.createProcess(
-        new ClientHandler('ProcessoCliente', () => scheduler.uniform(1, 4))
+        new ClientHandler('ClientHandler', () => scheduler.uniform(1, 4))
       )
     )
 
@@ -43,7 +43,7 @@ export class ClientHandler extends Process {
     scheduler.startProcessNow(
       scheduler.createProcess(
         new CachierHandler(
-          'ProcessoEsperaAtendimentoCaixa' + this.numCaixaDestino,
+          'CachierHandler' + this.numCaixaDestino,
           () => scheduler.uniform(1, 4),
           this.numCaixaDestino
         )

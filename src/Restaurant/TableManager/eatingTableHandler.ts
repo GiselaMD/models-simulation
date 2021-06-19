@@ -24,6 +24,6 @@ export class EatingTableHandler extends Process {
       filaDeClientesComendoNaMesa4.remove()
       mesas4Livres.release(1)
     }
-    console.log('Mais um entity satisfeito!!!')
+    console.log('Mais clientes satisfeito!!!')
   }
 }
