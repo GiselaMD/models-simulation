@@ -14,6 +14,7 @@ import { Process } from '../../process'
 import { KitchenHandler } from '../KitchenManager/kitchenHandler'
 import { Order } from '../KitchenManager/order'
 import { QueueTableHandler } from '../TableManager/queueTableHandler'
+import color from 'colors'
 
 export class CachierHandler extends Process {
   numCaixa: number
@@ -44,10 +45,24 @@ export class CachierHandler extends Process {
         this.name + ': Iniciando atendimento no caixa ' + this.numCaixa
       )
       atendenteCx1.allocate(1)
+      console.log(
+        color.blue(
+          `Quantidade de atendentes existentes no CachierHandler1  --> ${color.yellow(
+            '' + atendenteCx1.quantity
+          )} e em uso ${color.yellow('' + atendenteCx1.used)} atendentes`
+        )
+      )
       this.clienteSendoAtendidoNoCaixa =
         filaDeClientesNoCaixa1.remove() as Entity
     } else {
       atendenteCx2.allocate(1)
+      console.log(
+        color.blue(
+          `Quantidade de atendentes existentes no CachierHandler2  --> ${color.yellow(
+            '' + atendenteCx2.quantity
+          )} e em uso ${color.yellow('' + atendenteCx2.used)} atendentes`
+        )
+      )
       this.clienteSendoAtendidoNoCaixa =
         filaDeClientesNoCaixa2.remove() as Entity
     }

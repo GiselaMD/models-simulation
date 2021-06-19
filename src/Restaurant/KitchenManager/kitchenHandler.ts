@@ -31,7 +31,9 @@ export class KitchenHandler extends Process {
     cozinheiros.allocate(1)
     console.log(
       color.blue(
-        `inicio do cozimento possui ${cozinheiros.quantity} e em uso estão ${cozinheiros.used}`
+        `Quantidade de cozinheiros existentes --> ${color.yellow(
+          '' + cozinheiros.quantity
+        )} e em uso ${color.yellow('' + cozinheiros.used)} cozinheiros`
       )
     )
     this.pedidoSendoPreparado = filaDePedidosEntrandoCozinha.remove() as Entity

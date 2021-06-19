@@ -7,6 +7,7 @@ import {
   mesas4Livres,
 } from '../..'
 import { Process } from '../../process'
+import colors from 'colors'
 
 export class EatingTableHandler extends Process {
   constructor(name: string, duration: () => number) {
@@ -24,6 +25,6 @@ export class EatingTableHandler extends Process {
       filaDeClientesComendoNaMesa4.remove()
       mesas4Livres.release(1)
     }
-    console.log('Mais clientes satisfeito!!!')
+    console.log(colors.rainbow('Mais clientes satisfeito!!!'))
   }
 }

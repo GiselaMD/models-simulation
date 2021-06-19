@@ -20,7 +20,6 @@ export class WaiterOrderHandler extends Process {
   public searchOrder(clientesEsperandoMesa: EntitySet) {
     for (let cliente of clientesEsperandoMesa.getEntitySet()) {
       //clientesEsperandoMesa.getEntitySet().forEach(cliente => {
-      // TODO: Revisar esse aviso.
       for (let pedido of filaDePedidosEsperandoEntrega.getEntitySet()) {
         //filaDePedidosEsperandoEntrega.getEntitySet().forEach(pedido => {
         let order = pedido as Order

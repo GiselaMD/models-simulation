@@ -26,7 +26,18 @@ export class WaiterPetriNet extends Process {
   }
 
   public executeOnStart() {
+    console.log(color.rainbow('Tabela PetriNet'))
+    waiterPetriNet.petriNet?.atualizaStatusTransicoes()
+    waiterPetriNet.petriNet?.exibeMenu()
     waiterPetriNet.petriNet?.executaCiclo()
+    console.log(
+      color.blue(
+        `Quantidade de garçons livres --> ${color.yellow(
+          '' +
+            waiterPetriNet.petriNet?.getLugarByLabel('garcomLivre')?.getTokens()
+        )}`
+      )
+    )
   }
 
   public executeOnEnd() {
@@ -85,6 +96,7 @@ export class WaiterPetriNet extends Process {
         )
       )
     }
+    waiterPetriNet.petriNet?.atualizaStatusTransicoes()
     waiterPetriNet.petriNet?.executaCiclo()
   }
 }
