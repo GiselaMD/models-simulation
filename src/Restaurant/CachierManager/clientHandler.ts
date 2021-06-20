@@ -18,8 +18,6 @@ export class ClientHandler extends Process {
 
   public executeOnEnd() {
     const cliente = 'cliente' + randomInt(1, 5)
-    //console.log(this.name + ': Cliente entrou no restaurante ')
-    //console.log('Cliente --> ' + cliente)
 
     if (
       filaDeClientesNoCaixa1.getSize() <= filaDeClientesNoCaixa2.getSize() &&
@@ -40,7 +38,7 @@ export class ClientHandler extends Process {
     // Se auto agenda
     scheduler.startProcessNow(
       scheduler.createProcess(
-        new ClientHandler('ClientHandler', () => scheduler.uniform(1, 4))
+        new ClientHandler('ClientHandler', () => scheduler.exponential(3.0))
       )
     )
 
@@ -49,7 +47,7 @@ export class ClientHandler extends Process {
       scheduler.createProcess(
         new CachierHandler(
           'CachierHandler' + this.numCaixaDestino,
-          () => scheduler.uniform(1, 4),
+          () => scheduler.normal(2, 8),
           this.numCaixaDestino
         )
       )

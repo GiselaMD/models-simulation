@@ -14,7 +14,7 @@ import {
 import { Entity } from '../../entity'
 import { Process } from '../../process'
 import { WaiterPetriNet } from '../WaiterManager/waiterPetriNet'
-import color from 'colors'
+import colors from 'colors'
 
 export class QueueTableHandler extends Process {
   mesa: String = ''
@@ -41,39 +41,41 @@ export class QueueTableHandler extends Process {
   }
 
   public executeOnStart() {
-    console.log('Está no', this.name)
     if (this.name == 'QueueTableHandler-balcao') {
       this.mesa = 'balcao'
       bancosLivres.allocate(1)
-      console.log(
-        color.blue(
-          `Quantidade de bancos existentes --> ${color.yellow(
-            '' + bancosLivres.quantity
-          )} e em uso ${color.yellow('' + bancosLivres.used)} bancos`
+      scheduler.isDebbuger &&
+        console.log(
+          colors.blue(
+            `Quantidade de bancos existentes --> ${colors.yellow(
+              '' + bancosLivres.quantity
+            )} e em uso ${colors.yellow('' + bancosLivres.used)} bancos`
+          )
         )
-      )
       filaGarcomLimpaBalcao.insert(filaDeClientesNoBalcao.remove() as Entity)
     } else if (this.name == 'QueueTableHandler-M2') {
       this.mesa = 'M2'
       mesas2Livres.allocate(1)
-      console.log(
-        color.blue(
-          `Quantidade de mesas2 existentes --> ${color.yellow(
-            '' + mesas2Livres.quantity
-          )} e em uso ${color.yellow('' + mesas2Livres.used)} mesas2`
+      scheduler.isDebbuger &&
+        console.log(
+          colors.blue(
+            `Quantidade de mesas2 existentes --> ${colors.yellow(
+              '' + mesas2Livres.quantity
+            )} e em uso ${colors.yellow('' + mesas2Livres.used)} mesas2`
+          )
         )
-      )
       filaGarcomLimpaMesa2.insert(filaDeClientesNaMesa2.remove() as Entity)
     } else {
       this.mesa = 'M4'
       mesas4Livres.allocate(1)
-      console.log(
-        color.blue(
-          `Quantidade de mesas4 existentes --> ${color.yellow(
-            '' + mesas4Livres.quantity
-          )} e em uso ${color.yellow('' + mesas4Livres.used)} mesas`
+      scheduler.isDebbuger &&
+        console.log(
+          colors.blue(
+            `Quantidade de mesas4 existentes --> ${colors.yellow(
+              '' + mesas4Livres.quantity
+            )} e em uso ${colors.yellow('' + mesas4Livres.used)} mesas`
+          )
         )
-      )
       filaGarcomLimpaMesa4.insert(filaDeClientesNaMesa4.remove() as Entity)
     }
     waiterPetriNet.petriNet?.getLugarByLabel('clienteVaiSentar')?.insereToken(1)
@@ -81,7 +83,7 @@ export class QueueTableHandler extends Process {
       scheduler.createProcess(
         new WaiterPetriNet(
           'WaiterPetriNet-CleanTable-' + this.mesa,
-          () => scheduler.uniform(1, 4),
+          () => scheduler.normal(0.1, 35, 14, 5),
           'higienizandoMesa'
         )
       )

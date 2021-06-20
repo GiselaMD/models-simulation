@@ -15,7 +15,7 @@ import { Entity } from '../../entity'
 import { Process } from '../../process'
 import { WaiterOrderHandler } from '../KitchenManager/waiterOrderHandler'
 import { EatingTableHandler } from '../TableManager/eatingTableHandler'
-import color from 'colors'
+import colors from 'colors'
 
 export class WaiterPetriNet extends Process {
   local: string = ''
@@ -28,14 +28,17 @@ export class WaiterPetriNet extends Process {
   public executeOnStart() {
     waiterPetriNet.petriNet?.atualizaStatusTransicoes()
     waiterPetriNet.petriNet?.executaCiclo()
-    console.log(
-      color.blue(
-        `Quantidade de garçons livres --> ${color.yellow(
-          '' +
-            waiterPetriNet.petriNet?.getLugarByLabel('garcomLivre')?.getTokens()
-        )}`
+    scheduler.isDebbuger &&
+      console.log(
+        colors.blue(
+          `Quantidade de garçons livres --> ${colors.yellow(
+            '' +
+              waiterPetriNet.petriNet
+                ?.getLugarByLabel('garcomLivre')
+                ?.getTokens()
+          )}`
+        )
       )
-    )
   }
 
   public executeOnEnd() {
@@ -64,7 +67,7 @@ export class WaiterPetriNet extends Process {
       scheduler.startProcessNow(
         scheduler.createProcess(
           new EatingTableHandler('EatingTableHandler-' + this.mesa, () =>
-            scheduler.uniform(1, 4)
+            scheduler.normal(0.1, 45, 20, 8)
           )
         )
       )

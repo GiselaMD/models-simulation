@@ -1,6 +1,6 @@
 import colors from 'colors'
 import { Entity } from './entity'
-import color from 'colors'
+import { scheduler } from '../src'
 
 export const enum Mode {
   FIFO = 'FIFO',
@@ -95,7 +95,6 @@ export class EntitySet {
       return
     }
     if (!entity.id) {
-      console.log(entity.getName())
       console.error(colors.red('Id not setted in entity'))
       return
     }
@@ -117,12 +116,13 @@ export class EntitySet {
   public remove() {
     const entityRemoved = this.set.pop()
 
-    console.log(
-      'Entity name --> ',
-      entityRemoved?.getName(),
-      'Entity id --> ',
-      entityRemoved?.getId()
-    )
+    scheduler.isDebbuger &&
+      console.log(
+        'remove-entitySet: Entity name --> ',
+        entityRemoved?.getName(),
+        'Entity id --> ',
+        entityRemoved?.getId()
+      )
 
     if (!entityRemoved || !entityRemoved.id) {
       console.error(colors.red('Unable to remove Entity'))

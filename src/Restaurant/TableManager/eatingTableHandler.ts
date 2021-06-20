@@ -7,7 +7,7 @@ import {
   mesas4Livres,
 } from '../..'
 import { Process } from '../../process'
-import color from 'colors'
+import colors from 'colors'
 
 export class EatingTableHandler extends Process {
   constructor(name: string, duration: () => number) {
@@ -15,8 +15,6 @@ export class EatingTableHandler extends Process {
   }
 
   public executeOnEnd() {
-    console.log(color.bgRed('EATING TABLE HANDLER --> ' + this.name))
-
     if (this.name == 'EatingTableHandler-balcao') {
       filaDeClientesComendoNoBalcao.remove()
       bancosLivres.release(1)
@@ -27,6 +25,8 @@ export class EatingTableHandler extends Process {
       filaDeClientesComendoNaMesa4.remove()
       mesas4Livres.release(1)
     }
-    console.log(color.rainbow('\nMais clientes satisfeitos!!!\n'))
+
+    // Log fundamental para o funcionamento da rede, não mexer!!!
+    console.log(colors.rainbow('\nMais clientes satisfeitos!!!\n'))
   }
 }

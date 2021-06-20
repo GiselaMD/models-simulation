@@ -26,8 +26,6 @@ export class PetriNetHandler {
     const transicao5 = this.petriNet.criaTransicao(5, 'T5')
     const transicao6 = this.petriNet.criaTransicao(6, 'T6')
 
-    //transicao1.setStatus(true)
-
     // ------------------ Conexões ------------------
     // Lugar, transição, peso,                       ehEntrada, ehConexãoInibidora, ehConexãoReset
     this.petriNet.criaConexao(lugar1, transicao1, 1, true, false, false)

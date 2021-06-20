@@ -4,9 +4,9 @@ import { EntitySet } from './entitySet'
 import { Process } from './process'
 import { Resource } from './resource'
 import { uuid } from 'uuidv4'
-import { randomInt } from 'crypto'
 import promptSync from 'prompt-sync'
 import colors from 'colors'
+import { randomInt } from 'crypto'
 
 const prompt = promptSync({ sigint: true })
 
@@ -130,14 +130,6 @@ export class Scheduler {
         }
       }
 
-      console.log(
-        colors.cyan(
-          `Tamanho ANTES dos processos do tempo ${this.time} = ${
-            this.processSchedule[this.time].length
-          }`
-        )
-      )
-
       // Remove o primeiro processo do array
       const { engineProcess, type } = this.processSchedule[
         this.time
@@ -205,32 +197,21 @@ export class Scheduler {
           )
       }
 
-      console.log(
-        colors.cyan(
-          `Tamanho DEPOIS dos processos do tempo ${this.time} = ${
-            this.processSchedule[this.time].length
-          }`
-        )
-      )
-
-      const printSchedule = Object.keys(this.processSchedule).map(key => {
-        const elements: ProcessItem[] = this.processSchedule[key]
-
-        let line = `${key} -> [`
-
-        for (const element of elements) {
-          line += `{ ${element.engineProcess.name} | ${element.engineProcess.id} | Type: ${element.type} } | `
-        }
-
-        return line + ' ]'
-      })
       // Tabela com todas informações dos processos (nome, ID e type)
+      // const printSchedule = Object.keys(this.processSchedule).map(key => {
+      //   const elements: ProcessItem[] = this.processSchedule[key]
+
+      //   let line = `${key} -> [`
+
+      //   for (const element of elements) {
+      //     line += `{ ${element.engineProcess.name} | ${element.engineProcess.id} | Type: ${element.type} } | `
+      //   }
+
+      //   return line + ' ]'
+      // })
       //console.log(colors.green('processSchedule --> '), printSchedule)
+
       console.log(this.processSchedule)
-      // console.log(
-      //   'processSchedule[time]',
-      //   JSON.stringify(this.processSchedule[time])
-      // )
     }
 
     // após processar todos dentro do tempo "time" remove a chave da estrutura
@@ -268,6 +249,7 @@ export class Scheduler {
    * @returns
    */
   public simulateBy(duration: number) {
+    // TODO: Implementar o simulateBy.
     while (this.time < duration) {
       this.executeSimulation()
     }
@@ -445,9 +427,10 @@ export class Scheduler {
    */
   public uniform(minValue: number, maxValue: number) {
     const rvg = new RandVarGen()
-    // BUG: Não funciona, resulta em 1.6428710408508778.
+    // BUG: Não funciona.
     //const result = rvg.uniform(minValue, maxValue)
-    const result = randomInt(minValue, maxValue)
+    //const result = randomInt(minValue, maxValue)
+    const result = randomInt(2, 4)
     this.isDebbuger &&
       console.log(
         `Calculou uniform com minValue = ${minValue}, maxValue = ${maxValue}, e resultado = ${result}`
@@ -462,7 +445,10 @@ export class Scheduler {
    */
   public exponential(meanValue: number) {
     const rvg = new RandVarGen()
-    const result = rvg.exponential(meanValue)
+    // BUG: Não funciona.
+    //const result = rvg.exponential(meanValue)
+    //const result = randomInt(meanValue, meanValue + 1)
+    const result = randomInt(2, 4)
     this.isDebbuger &&
       console.log(
         `Calculou exponencial com meanValue = ${meanValue} e resultado = ${result}`
@@ -476,9 +462,18 @@ export class Scheduler {
    * @param stdDeviationValue utiliza o valor de desvio do valor
    * @returns o resultado da operação
    */
-  public normal(meanValue: number, stdDeviationValue: number) {
+  // TODO: Precisa ter opção de colocar 2 ou 4 parâmetros
+  public normal(
+    meanValue: number,
+    stdDeviationValue: number,
+    a: number = 0,
+    b: number = 0
+  ) {
     const rvg = new RandVarGen()
-    const result = rvg.normal(meanValue, stdDeviationValue)
+    // BUG: Não funciona.
+    //const result = rvg.normal(meanValue, stdDeviationValue)
+    //const result = randomInt(meanValue, stdDeviationValue)
+    const result = randomInt(2, 4)
     this.isDebbuger &&
       console.log(
         `Calculou normal com meanValue = ${meanValue}, stdDeviationValue = ${stdDeviationValue} e resultado = ${result}`

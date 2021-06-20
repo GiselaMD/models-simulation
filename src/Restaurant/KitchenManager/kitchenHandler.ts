@@ -2,10 +2,11 @@ import {
   cozinheiros,
   filaDePedidosEntrandoCozinha,
   filaDePedidosEsperandoEntrega,
+  scheduler,
 } from '../..'
 import { Entity } from '../../entity'
 import { Process } from '../../process'
-import color from 'colors'
+import colors from 'colors'
 import { Order } from './order'
 
 export class KitchenHandler extends Process {
@@ -16,26 +17,6 @@ export class KitchenHandler extends Process {
   }
 
   public canExecute() {
-    console.log(
-      color.green(
-        `FILA DE PEDIDOS ENTRANDO COZINHA ${filaDePedidosEntrandoCozinha.getSize()}\n`
-      )
-    )
-    // TODO: Remover, apenas para teste
-    console.log(filaDePedidosEntrandoCozinha.getSize())
-    for (let pedido of filaDePedidosEntrandoCozinha.getEntitySet()) {
-      //filaDePedidosEsperandoEntrega.getEntitySet().forEach(pedido => {
-      let order = pedido as Order
-      console.log(
-        color.green(
-          'ID do cliente dono do pedido ' +
-            order.getIdCliente() +
-            'ID pedido ' +
-            order.getId()
-        )
-      )
-    }
-
     if (!filaDePedidosEntrandoCozinha.isEmpty() && cozinheiros.canAllocate(1)) {
       return true
     }
@@ -44,23 +25,25 @@ export class KitchenHandler extends Process {
 
   public executeOnStart() {
     cozinheiros.allocate(1)
-    console.log(
-      color.blue(
-        `Quantidade de cozinheiros existentes --> ${color.yellow(
-          '' + cozinheiros.quantity
-        )} e em uso ${color.yellow('' + cozinheiros.used)} cozinheiros`
+    scheduler.isDebbuger &&
+      console.log(
+        colors.blue(
+          `Quantidade de cozinheiros existentes --> ${colors.yellow(
+            '' + cozinheiros.quantity
+          )} e em uso ${colors.yellow('' + cozinheiros.used)} cozinheiros`
+        )
       )
-    )
     this.pedidoSendoPreparado = filaDePedidosEntrandoCozinha.remove() as Entity
   }
 
   public executeOnEnd() {
     filaDePedidosEsperandoEntrega.insert(this.pedidoSendoPreparado as Entity)
     cozinheiros.release(1)
-    console.log(
-      color.blue(
-        `Fim do cozimento possui ${cozinheiros.quantity} e em uso estão ${cozinheiros.used}`
+    scheduler.isDebbuger &&
+      console.log(
+        colors.blue(
+          `Fim do cozimento possui ${cozinheiros.quantity} e em uso estão ${cozinheiros.used}`
+        )
       )
-    )
   }
 }

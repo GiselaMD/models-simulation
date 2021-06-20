@@ -31,7 +31,7 @@ export class RestroomRequestHandler extends Process {
       scheduler.createProcess(
         new WaiterPetriNet(
           'WaiterPetriNet-RestroomRequestHandler',
-          () => scheduler.uniform(1, 4),
+          () => scheduler.normal(1, 4),
           'garcomNoCaixa'
         )
       )
@@ -42,7 +42,7 @@ export class RestroomRequestHandler extends Process {
     scheduler.startProcessNow(
       scheduler.createProcess(
         new RestroomRequestHandler('RestroomRequestHandler', () =>
-          scheduler.uniform(1, 4)
+          scheduler.uniform(5, 15)
         )
       )
     )

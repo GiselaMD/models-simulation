@@ -1,5 +1,3 @@
-import { Scheduler } from './scheduler'
-
 export class Resource {
   id: string | null
   name: string

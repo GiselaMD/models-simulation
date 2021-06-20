@@ -4,7 +4,7 @@ import { Scheduler } from './scheduler'
 import { ClientHandler } from './Restaurant/CachierManager/clientHandler'
 import { RestroomRequestHandler } from './Restaurant/RestroomManager/restroomRequestHandler'
 import { PetriNetHandler } from './Restaurant/PetriNetManager/petriNetHandler'
-
+import prompt from 'prompt-sync'
 // Cria o Scheduler
 export const scheduler = new Scheduler()
 
@@ -13,10 +13,10 @@ waiterPetriNet.createPetriNet()
 // Quantidade de garçons
 waiterPetriNet.petriNet?.getLugarByLabel('garcomLivre')?.insereToken(5)
 
-//TODO: Resolver o problema do warning.
-//TODO: Revisar o tempo do duration de todos os processos.
-//TODO: Melhorar nome QueueTableHandler-M
-//TODO: Cliente feliz separado por \n
+// TODO: Resolver o problema do warning uuidv4().
+// TODO: Criar o simulateBy().
+// BUG: Cálculos de tempo estão errados.
+// TODO: Criar o excel de comparação do AnyLogic com o Motor.
 
 // ------------------------------ Recursos do sistema ------------------------------
 
@@ -120,22 +120,103 @@ export const filaDeClientesComendoNaMesa4 = scheduler.createEntitySet(
 
 scheduler.startProcessNow(
   scheduler.createProcess(
-    new ClientHandler('ClientHandler', () => scheduler.uniform(1, 4))
+    new ClientHandler('ClientHandler', () => scheduler.exponential(3.0))
   )
 )
 scheduler.startProcessNow(
   scheduler.createProcess(
     new RestroomRequestHandler('RestroomRequestHandler', () =>
-      scheduler.uniform(1, 4)
+      scheduler.uniform(5, 15)
     )
   )
 )
 
 // ---------- Simulando o sistema ----------
 
-// Criar menuzinho
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Uniform --> ', scheduler.uniform(5, 15))
+// console.log('Exponential --> ', scheduler.exponential(10))
+// console.log('Exponential --> ', scheduler.exponential(10))
+// console.log('Exponential --> ', scheduler.exponential(10))
+// console.log('Exponential --> ', scheduler.exponential(10))
+// console.log('Exponential --> ', scheduler.exponential(10))
+// console.log('Exponential --> ', scheduler.exponential(10))
+// console.log('Exponential --> ', scheduler.exponential(10))
+// console.log('Exponential --> ', scheduler.exponential(10))
+// console.log('Exponential --> ', scheduler.exponential(10))
+// console.log('Exponential --> ', scheduler.exponential(10))
+// console.log('Exponential --> ', scheduler.exponential(10))
+// console.log('Exponential --> ', scheduler.exponential(10))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+// console.log('Normal --> ', scheduler.normal(10, 5))
+
+while (true) {
+  console.log('\n=== Execução ===')
+  console.log('1. Simulate')
+  console.log('2. SimulateOneStep')
+  console.log('3. SimulateBy')
+  console.log('4. SimulateUntil')
+  console.log('9. Sair')
+  console.log()
+
+  const option = prompt({ sigint: true })('')
+
+  switch (option) {
+    case '1':
+      scheduler.simulate()
+      break
+    case '2':
+      scheduler.simulateOneStep()
+      break
+    case '3':
+      const duration = prompt({ sigint: true })('Digite o duration:')
+      scheduler.simulateBy(Number(duration))
+      break
+    case '4':
+      const absoluteTime = prompt({ sigint: true })(
+        'Digite quanto tempo você deseja executar:'
+      )
+      scheduler.simulateUntil(Number(absoluteTime))
+      break
+    case '9':
+      console.log('Parando execução!')
+      break
+    default:
+      console.log('Opção inválida.')
+      break
+  }
+
+  if (option === '9') {
+    break
+  }
+}
 
 // Simula o sistema até esgotar
-//scheduler.simulate()
-//scheduler.simulateOneStep()
-scheduler.simulateUntil(50)
+// scheduler.simulate()
+// scheduler.simulateOneStep()
+// scheduler.simulateUntil(20)

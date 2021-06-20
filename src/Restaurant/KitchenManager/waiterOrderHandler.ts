@@ -10,7 +10,7 @@ import { EntitySet } from '../../entitySet'
 import { Process } from '../../process'
 import { WaiterPetriNet } from '../WaiterManager/waiterPetriNet'
 import { Order } from './order'
-import color from 'colors'
+import colors from 'colors'
 
 export class WaiterOrderHandler extends Process {
   mesa: string = ''
@@ -19,17 +19,9 @@ export class WaiterOrderHandler extends Process {
   }
 
   public searchOrder(clientesEsperandoMesa: EntitySet) {
-    console.log(color.red('Iniciando searchOrder'))
     for (let cliente of clientesEsperandoMesa.getEntitySet()) {
-      console.log(color.red('Cliente esperando na mesa: ' + cliente.getId()))
-
-      //clientesEsperandoMesa.getEntitySet().forEach(cliente => {
       for (let pedido of filaDePedidosEsperandoEntrega.getEntitySet()) {
-        //filaDePedidosEsperandoEntrega.getEntitySet().forEach(pedido => {
         let order = pedido as Order
-        console.log(
-          color.red('Pedido esperando cliente: ' + order.getIdCliente())
-        )
         if ((cliente.getId() as string) == order.getIdCliente()) {
           filaDePedidosEsperandoEntrega.removeById(order.getId() as string)
           return true // Pedido do cliente está pronto
@@ -40,10 +32,7 @@ export class WaiterOrderHandler extends Process {
   }
 
   public canExecute() {
-    console.log(color.red('canExecute?'))
     if (!filaDePedidosEsperandoEntrega.isEmpty()) {
-      console.log('Existe filaDePedidosEsperandoEntrega')
-      console.log('Nome mesa: ' + this.name)
       if (this.name == 'WaiterOrderHandler-balcao') {
         if (!this.searchOrder(filaDeClientesEsperandoPedidoNoBalcao)) {
           return false
