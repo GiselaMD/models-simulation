@@ -13,9 +13,7 @@ waiterPetriNet.createPetriNet()
 // Quantidade de garçons
 waiterPetriNet.petriNet?.getLugarByLabel('garcomLivre')?.insereToken(5)
 
-// TODO: Resolver o problema do warning uuidv4().
 // TODO: Criar o simulateBy().
-// BUG: Cálculos de tempo estão errados.
 // TODO: Criar o excel de comparação do AnyLogic com o Motor.
 
 // ------------------------------ Recursos do sistema ------------------------------

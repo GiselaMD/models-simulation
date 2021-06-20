@@ -3,10 +3,11 @@ import { Entity } from './entity'
 import { EntitySet } from './entitySet'
 import { Process } from './process'
 import { Resource } from './resource'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 import promptSync from 'prompt-sync'
 import colors from 'colors'
-import { randomInt } from 'crypto'
+import { sorter } from './utils/sort'
+
 const rvg = new RandVarGen()
 
 const prompt = promptSync({ sigint: true })
@@ -198,21 +199,23 @@ export class Scheduler {
           )
       }
 
+      const sortedSchedule = Object.keys(this.processSchedule).sort(sorter)
+
       // Tabela com todas informações dos processos (nome, ID e type)
-      // const printSchedule = Object.keys(this.processSchedule).map(key => {
-      //   const elements: ProcessItem[] = this.processSchedule[key]
+      const printSchedule = sortedSchedule.map(key => {
+        const elements: ProcessItem[] = this.processSchedule[key]
 
-      //   let line = `${key} -> [`
+        let line = `${key} -> [`
 
-      //   for (const element of elements) {
-      //     line += `{ ${element.engineProcess.name} | ${element.engineProcess.id} | Type: ${element.type} } | `
-      //   }
+        for (const element of elements) {
+          line += `{ ${element.engineProcess.name} | ${element.engineProcess.id} | Type: ${element.type} } | `
+        }
 
-      //   return line + ' ]'
-      // })
-      //console.log(colors.green('processSchedule --> '), printSchedule)
+        return line + ' ]'
+      })
+      console.log(colors.green('processSchedule --> '), printSchedule)
 
-      console.log(this.processSchedule)
+      // console.log(this.processSchedule)
     }
 
     // após processar todos dentro do tempo "time" remove a chave da estrutura
