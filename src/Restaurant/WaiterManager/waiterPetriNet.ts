@@ -63,7 +63,7 @@ export class WaiterPetriNet extends Process {
       }
       scheduler.startProcessNow(
         scheduler.createProcess(
-          new EatingTableHandler('EatingTableHandler-' + this.name, () =>
+          new EatingTableHandler('EatingTableHandler-' + this.mesa, () =>
             scheduler.uniform(1, 4)
           )
         )

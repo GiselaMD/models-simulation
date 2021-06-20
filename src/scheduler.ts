@@ -110,18 +110,13 @@ export class Scheduler {
   }
 
   private async executeSimulation() {
-    // Pega o primeiro tempo disponível no modelo
-    const [time] = Object.keys(this.processSchedule)
-      .map(parseFloat)
-      .sort((a, b) => a - b)
-
     // Atualiza o tempo do modelo pro tempo atual do processo
-    this.time = time
+    this.time = this.getNextTime()
     console.log(colors.bgBlue('TEMPO ATUAL: ' + this.time))
     // const processes = this.processSchedule[time]
 
     // Varre os processos do tempo "time"
-    while (this.processSchedule[time].length > 0) {
+    while (this.processSchedule[this.time].length > 0) {
       if (this.isDebbuger) {
         const continueResult = prompt(
           colors.yellow(
@@ -137,13 +132,15 @@ export class Scheduler {
 
       console.log(
         colors.cyan(
-          `Tamanho ANTES dos processos do tempo ${this.time} = ${this.processSchedule[time].length}`
+          `Tamanho ANTES dos processos do tempo ${this.time} = ${
+            this.processSchedule[this.time].length
+          }`
         )
       )
 
       // Remove o primeiro processo do array
       const { engineProcess, type } = this.processSchedule[
-        time
+        this.time
       ].shift() as ProcessItem
       // const [{ engineProcess, type }] = processes.splice(0, 1)
 
@@ -155,7 +152,7 @@ export class Scheduler {
               colors.red(
                 `\tSem recursos para executar processo: --> Process ${
                   engineProcess.name
-                } com id ${engineProcess.getId()} e time: ${time}`
+                } com id ${engineProcess.getId()} e time: ${this.time}`
               )
             )
 
@@ -182,7 +179,7 @@ export class Scheduler {
               `${engineProcess.name}`
             )} com id ${colors.yellow(
               `${engineProcess.getId()}`
-            )} e time:  ${colors.yellow(`${time}`)}`
+            )} e time:  ${colors.yellow(`${this.time}`)}`
           )
 
         const endTime = this.time + duration
@@ -204,13 +201,15 @@ export class Scheduler {
               `${engineProcess.name}`
             )} com id ${colors.yellow(
               `${engineProcess.getId()}`
-            )} e time:  ${colors.yellow(`${time}`)}`
+            )} e time:  ${colors.yellow(`${this.time}`)}`
           )
       }
 
       console.log(
         colors.cyan(
-          `Tamanho DEPOIS dos processos do tempo ${this.time} = ${this.processSchedule[time].length}`
+          `Tamanho DEPOIS dos processos do tempo ${this.time} = ${
+            this.processSchedule[this.time].length
+          }`
         )
       )
 
@@ -236,8 +235,8 @@ export class Scheduler {
 
     // após processar todos dentro do tempo "time" remove a chave da estrutura
     // para na próxima iteração pegar os processos do próximo tempo
-    if (Object.values(this.processSchedule[time]).length === 0) {
-      delete this.processSchedule[time]
+    if (Object.values(this.processSchedule[this.time]).length === 0) {
+      delete this.processSchedule[this.time]
     }
   }
 
@@ -269,7 +268,7 @@ export class Scheduler {
    * @returns
    */
   public simulateBy(duration: number) {
-    while (this.time <= duration) {
+    while (this.time < duration) {
       this.executeSimulation()
     }
   }
@@ -280,7 +279,8 @@ export class Scheduler {
    * @returns a simulação com o tempo absoluto
    */
   public simulateUntil(absoluteTime: number) {
-    while (this.time <= absoluteTime) {
+    while (true) {
+      if (this.getNextTime() > absoluteTime) break
       this.executeSimulation()
     }
   }
@@ -524,5 +524,15 @@ export class Scheduler {
    */
   public maxEntitiesPresent() {
     return this.maxActiveEntities
+  }
+
+  /**
+   * getNextTime()
+   * @returns número máximo de entidades presentes no modelo até o momento
+   */
+  public getNextTime() {
+    return Object.keys(this.processSchedule)
+      .map(parseFloat)
+      .sort((a, b) => a - b)[0]
   }
 }

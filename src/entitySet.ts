@@ -1,5 +1,6 @@
 import colors from 'colors'
 import { Entity } from './entity'
+import color from 'colors'
 
 export const enum Mode {
   FIFO = 'FIFO',
@@ -115,6 +116,13 @@ export class EntitySet {
    */
   public remove() {
     const entityRemoved = this.set.pop()
+
+    console.log(
+      'Entity name --> ',
+      entityRemoved?.getName(),
+      'Entity id --> ',
+      entityRemoved?.getId()
+    )
 
     if (!entityRemoved || !entityRemoved.id) {
       console.error(colors.red('Unable to remove Entity'))

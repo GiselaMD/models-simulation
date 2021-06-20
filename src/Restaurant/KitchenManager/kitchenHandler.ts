@@ -35,7 +35,6 @@ export class KitchenHandler extends Process {
         )
       )
     }
-    console.log('KDDDDDDDDDDDdd')
 
     if (!filaDePedidosEntrandoCozinha.isEmpty() && cozinheiros.canAllocate(1)) {
       return true

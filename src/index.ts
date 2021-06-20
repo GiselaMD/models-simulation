@@ -133,6 +133,9 @@ scheduler.startProcessNow(
 
 // ---------- Simulando o sistema ----------
 
+// Criar menuzinho
+
 // Simula o sistema até esgotar
 //scheduler.simulate()
-scheduler.simulateOneStep()
+//scheduler.simulateOneStep()
+scheduler.simulateUntil(50)
