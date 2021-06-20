@@ -7,6 +7,7 @@ import { uuid } from 'uuidv4'
 import promptSync from 'prompt-sync'
 import colors from 'colors'
 import { randomInt } from 'crypto'
+const rvg = new RandVarGen()
 
 const prompt = promptSync({ sigint: true })
 
@@ -426,16 +427,12 @@ export class Scheduler {
    * @returns o resultado da operação
    */
   public uniform(minValue: number, maxValue: number) {
-    const rvg = new RandVarGen()
-    // BUG: Não funciona.
-    //const result = rvg.uniform(minValue, maxValue)
-    //const result = randomInt(minValue, maxValue)
-    const result = randomInt(2, 4)
+    const uniformResult = rvg.uniform(minValue, maxValue)
     this.isDebbuger &&
       console.log(
-        `Calculou uniform com minValue = ${minValue}, maxValue = ${maxValue}, e resultado = ${result}`
+        `Calculou uniform com minValue = ${minValue}, maxValue = ${maxValue}, e resultado = ${uniformResult}`
       )
-    return result
+    return uniformResult
   }
 
   /**
@@ -444,16 +441,12 @@ export class Scheduler {
    * @returns o resultado da operação
    */
   public exponential(meanValue: number) {
-    const rvg = new RandVarGen()
-    // BUG: Não funciona.
-    //const result = rvg.exponential(meanValue)
-    //const result = randomInt(meanValue, meanValue + 1)
-    const result = randomInt(2, 4)
+    const expoResult = rvg.exponential(meanValue)
     this.isDebbuger &&
       console.log(
-        `Calculou exponencial com meanValue = ${meanValue} e resultado = ${result}`
+        `Calculou exponencial com meanValue = ${meanValue} e resultado = ${expoResult}`
       )
-    return result
+    return expoResult
   }
 
   /**
@@ -469,16 +462,15 @@ export class Scheduler {
     a: number = 0,
     b: number = 0
   ) {
-    const rvg = new RandVarGen()
-    // BUG: Não funciona.
-    //const result = rvg.normal(meanValue, stdDeviationValue)
-    //const result = randomInt(meanValue, stdDeviationValue)
-    const result = randomInt(2, 4)
+    let normalResult = rvg.normal(meanValue, stdDeviationValue)
+    while (normalResult < 0) {
+      normalResult = rvg.normal(meanValue, stdDeviationValue)
+    }
     this.isDebbuger &&
       console.log(
-        `Calculou normal com meanValue = ${meanValue}, stdDeviationValue = ${stdDeviationValue} e resultado = ${result}`
+        `Calculou normal com meanValue = ${meanValue}, stdDeviationValue = ${stdDeviationValue} e resultado = ${normalResult}`
       )
-    return result
+    return normalResult
   }
 
   // ---------- coleta de estatísticas ----------

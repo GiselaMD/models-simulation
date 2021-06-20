@@ -181,8 +181,7 @@ while (true) {
   console.log('2. SimulateOneStep')
   console.log('3. SimulateBy')
   console.log('4. SimulateUntil')
-  console.log('9. Sair')
-  console.log()
+  console.log('9. Sair\n')
 
   const option = prompt({ sigint: true })('')
 
