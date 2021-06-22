@@ -1,6 +1,7 @@
 import colors from 'colors'
 import { Entity } from './entity'
 import { scheduler } from '../src'
+import { randomInteger } from './utils/math'
 
 export const enum Mode {
   FIFO = 'FIFO',
@@ -99,7 +100,27 @@ export class EntitySet {
       return
     }
 
-    this.set.push(entity)
+    switch (this.mode) {
+      case Mode.FIFO:
+      case Mode.NONE:
+        this.set.push(entity)
+        break
+      case Mode.LIFO:
+        this.set.unshift(entity)
+        break
+      case Mode.P_BASED:
+        if (entity.priority >= 0 && entity.priority <= 255) {
+          this.set.push(entity)
+          this.set.sort((a, b) => a.priority - b.priority)
+        } else {
+          console.error(
+            colors.red(
+              `insert() priority based: Prioridade inválida (${entity.getPriority()}) na entidade com id = ${entity.getId()} `
+            )
+          )
+        }
+        break
+    }
 
     this.setTime[entity.id] = {
       duration: 0,
@@ -114,7 +135,20 @@ export class EntitySet {
    * @returns Remove da lista
    */
   public remove() {
-    const entityRemoved = this.set.pop()
+    let entityRemoved
+
+    switch (this.mode) {
+      case Mode.FIFO:
+      case Mode.LIFO:
+      case Mode.P_BASED:
+        entityRemoved = this.set.shift()
+        break
+      case Mode.NONE:
+        const rand = randomInteger(0, this.set.length - 1)
+        entityRemoved = this.removeById(this.set[rand].getId() as string)
+
+        break
+    }
 
     scheduler.isDebbuger &&
       console.log(
