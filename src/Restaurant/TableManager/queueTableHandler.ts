@@ -84,7 +84,7 @@ export class QueueTableHandler extends Process {
         new WaiterPetriNet(
           'WaiterPetriNet-CleanTable-' + this.mesa,
           // () => scheduler.normal(0.1, 35, 14, 5),
-          () => scheduler.normal(0.1, 35),
+          () => scheduler.normal(14, 5),
           'higienizandoMesa'
         )
       )
