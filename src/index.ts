@@ -13,7 +13,6 @@ waiterPetriNet.createPetriNet()
 // Quantidade de garçons
 waiterPetriNet.petriNet?.getLugarByLabel('garcomLivre')?.insereToken(5)
 
-// TODO: Criar o excel de comparação do AnyLogic com o Motor.
 // TODO: Realizar os logs finais
 
 // ------------------------------ Recursos do sistema ------------------------------
