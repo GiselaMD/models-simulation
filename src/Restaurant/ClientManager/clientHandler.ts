@@ -8,7 +8,7 @@ import {
 } from '../..'
 import { Entity } from '../../entity'
 import { Process } from '../../process'
-import { CachierHandler } from './cachierHandler'
+import { CachierHandler } from '../CachierManager/cachierHandler'
 
 export class ClientHandler extends Process {
   numCaixaDestino: number = 0

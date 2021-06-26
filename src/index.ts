@@ -1,7 +1,7 @@
 import { EntitySet, Mode } from './entitySet'
 import { Resource } from './resource'
 import { Scheduler } from './scheduler'
-import { ClientHandler } from './Restaurant/CachierManager/clientHandler'
+import { ClientHandler } from './Restaurant/ClientManager/clientHandler'
 import { RestroomRequestHandler } from './Restaurant/RestroomManager/restroomRequestHandler'
 import { PetriNetHandler } from './Restaurant/PetriNetManager/petriNetHandler'
 import prompt from 'prompt-sync'

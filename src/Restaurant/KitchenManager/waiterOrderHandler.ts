@@ -24,6 +24,7 @@ export class WaiterOrderHandler extends Process {
         let order = pedido as Order
         if ((cliente.getId() as string) == order.getIdCliente()) {
           filaDePedidosEsperandoEntrega.removeById(order.getId() as string)
+          scheduler.destroyEntity(order.getId() as string)
           return true // Pedido do cliente está pronto
         }
       }

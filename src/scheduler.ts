@@ -149,7 +149,7 @@ export class Scheduler {
       if (this.isDebbuger) {
         const continueResult = prompt(
           colors.yellow(
-            '\nDeseja continuar (Qualquer tecla para continuar, "N" para encerrar)? \n'
+            '\nDeseja continuar (Enter para continuar, "N" para encerrar)? \n'
           )
         )
 
@@ -332,7 +332,7 @@ export class Scheduler {
 
   /**
    * destroyEntity(id: string)
-   * @param entity recebe o objeto entidade
+   * @param id recebe o id da entidade
    */
   public destroyEntity(id: string) {
     this.isDebbuger && console.log(`destroyEntity, com id ${id}`)
@@ -584,7 +584,7 @@ export class Scheduler {
    * showSummary()
    * @returns um log do resumo da simulação
    */
-  private showSummary() {
+  public showSummary() {
     console.log('\n------ RESUMO DA EXECUÇÃO ------\n')
     console.log('Simulation duration:', this.getTotalDuration())
     console.log('Total de Entidades Criadas:', this.getEntityTotalQuantity())
