@@ -1,6 +1,6 @@
 import colors from 'colors'
 import { Entity } from './entity'
-import { scheduler } from '../src'
+import { scheduler } from './'
 import { randomInteger } from './utils/math'
 
 export const enum Mode {
@@ -173,7 +173,7 @@ export class EntitySet {
 
     entityTime.duration = scheduler.getTime() - entityTime.creation
     console.log(`entityRemoved.getName()`, entityRemoved.getName())
-    console.log(`scheduler.getTime()`,  scheduler.getTime())
+    console.log(`scheduler.getTime()`, scheduler.getTime())
     console.log(`entityTime.creation`, entityTime.creation)
 
     return entityRemoved
@@ -311,7 +311,7 @@ export class EntitySet {
       this.log.push({ time, size: this.set.length })
       this.lastLogTime = time
     }
-  }  
+  }
 
   /**
    * startLog(timeGap)

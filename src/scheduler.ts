@@ -7,6 +7,20 @@ import { v4 as uuid } from 'uuid'
 import promptSync from 'prompt-sync'
 import colors from 'colors'
 import { sorter } from './utils/sort'
+import {
+  cozinheiros,
+  filaDeClientesComendoNaMesa2,
+  filaDeClientesComendoNaMesa4,
+  filaDeClientesComendoNoBalcao,
+  filaDeClientesNaMesa2,
+  filaDeClientesNaMesa4,
+  filaDeClientesNoBalcao,
+  filaDeClientesNoCaixa1,
+  filaDeClientesNoCaixa2,
+  filaDePedidosEntrandoCozinha,
+  filaDePedidosEsperandoEntrega,
+  filaDePedidosSendoPreparados,
+} from './'
 
 const rvg = new RandVarGen()
 
@@ -20,7 +34,7 @@ interface ProcessSchedule {
   [key: number]: ProcessItem[]
 }
 export class Scheduler {
-  time: number = 0
+  time: number
   processSchedule: ProcessSchedule = {}
   entityList: Entity[] = []
   resourceList: Resource[] = []
@@ -29,6 +43,11 @@ export class Scheduler {
   destroyedEntities: Entity[] = []
   maxActiveEntities: number = 0
   isDebbuger: boolean = false
+  executeSimulateOneStep: boolean = false
+
+  constructor(public initialTime: number = 0) {
+    this.time = initialTime
+  }
 
   /**
    * getTime()
@@ -135,8 +154,9 @@ export class Scheduler {
         )
 
         if (continueResult.toUpperCase() === 'N') {
-          console.log('Encerrando a rede...')
-          process.exit(0)
+          console.log('Encerrando execução...')
+          this.executeSimulateOneStep = false
+          return
         }
       }
 
@@ -242,7 +262,7 @@ export class Scheduler {
     while (!this.isProcessScheduleEmpty()) {
       this.executeSimulation()
     }
-    console.log('Finalizou simulate()')
+    this.showSummary()
   }
 
   /**
@@ -252,7 +272,12 @@ export class Scheduler {
    */
   public simulateOneStep() {
     this.isDebbuger = true
-    this.simulate()
+    this.executeSimulateOneStep = true
+    while (this.executeSimulateOneStep) {
+      this.executeSimulation()
+    }
+    this.isDebbuger = false
+    this.showSummary()
   }
 
   /**
@@ -275,6 +300,7 @@ export class Scheduler {
       if (this.getNextTime() > absoluteTime) break
       this.executeSimulation()
     }
+    this.showSummary()
   }
 
   // ---------- criação, destruição e acesso para componentes ----------
@@ -483,7 +509,23 @@ export class Scheduler {
    * @returns quantidade de entidades criadas até o momento
    */
   public getEntityTotalQuantity() {
+    return this.entityList.length + this.destroyedEntities.length
+  }
+
+  /**
+   * getActiveEntityTotalQuantity()
+   * @returns quantidade de entidades ativas no momento
+   */
+  public getActiveEntityTotalQuantity() {
     return this.entityList.length
+  }
+
+  /**
+   * getDestroyedEntityTotalQuantity()
+   * @returns quantidade de entidades destruídas no momento
+   */
+  public getDestroyedEntityTotalQuantity() {
+    return this.destroyedEntities.length
   }
 
   /**
@@ -505,7 +547,7 @@ export class Scheduler {
       total += entity.destroyedTime - entity.creationTime
     }
 
-    return total / this.destroyedEntities.length
+    return total / (this.destroyedEntities.length || 1)
   }
 
   /**
@@ -524,5 +566,81 @@ export class Scheduler {
     return Object.keys(this.processSchedule)
       .map(parseFloat)
       .sort((a, b) => a - b)[0]
+  }
+
+  /**
+   * getTotalDuration()
+   * @returns a duração total da simulação
+   */
+  public getTotalDuration(): number {
+    return this.time - this.initialTime
+  }
+
+  /**
+   * showSummary()
+   * @returns um log do resumo da simulação
+   */
+  private showSummary() {
+    console.log('\n------ RESUMO DA EXECUÇÃO ------\n')
+    console.log('Simulation duration:', this.getTotalDuration())
+    console.log('Total de Entidades Criadas: ', this.getEntityTotalQuantity())
+    console.log(
+      'Total de Entidades Ativas: ',
+      this.getActiveEntityTotalQuantity()
+    )
+    console.log(
+      'Total de Entidades Destruídas: ',
+      this.getDestroyedEntityTotalQuantity()
+    )
+    console.log(
+      'Tempo Médio das Entidades no Modelo: ',
+      this.averageTimeInModel()
+    )
+    console.log(
+      'Número Máximo de Entidades no Modelo: ',
+      this.maxEntitiesPresent()
+    )
+
+    console.log('Log Fila Caixa 1: ', filaDeClientesNoCaixa1.getLog())
+    console.log('Log Fila Caixa 2: ', filaDeClientesNoCaixa2.getLog())
+    console.log(
+      'Log Pedidos Entrando na Cozinha: ',
+      filaDePedidosEntrandoCozinha.getLog()
+    )
+    console.log(
+      'Log Pedidos Sendo Preparados: ',
+      filaDePedidosSendoPreparados.getLog()
+    )
+    console.log(
+      'Log Pedidos Esperando entrega: ',
+      filaDePedidosEsperandoEntrega.getLog()
+    )
+    console.log(
+      `${cozinheiros.getUsed()} de ${cozinheiros.getQuantity()} Cozinheiros em uso`
+    )
+    console.log(
+      'Log de clientes na fila do balcão: ',
+      filaDeClientesNoBalcao.getLog()
+    )
+    console.log(
+      'Log de clientes na fila da mesa de 2 lugares: ',
+      filaDeClientesNaMesa2.getLog()
+    )
+    console.log(
+      'Log de clientes na fila da mesa de 4 lugares: ',
+      filaDeClientesNaMesa4.getLog()
+    )
+    console.log(
+      'Log de clientes comendo no balcão: ',
+      filaDeClientesComendoNoBalcao.getLog()
+    )
+    console.log(
+      'Log de clientes comendo na mesa de 2 lugares: ',
+      filaDeClientesComendoNaMesa2.getLog()
+    )
+    console.log(
+      'Log de clientes comendo na mesa de 4 lugares: ',
+      filaDeClientesComendoNaMesa4.getLog()
+    )
   }
 }

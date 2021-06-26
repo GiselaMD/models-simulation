@@ -4,6 +4,8 @@ export class PetriNetHandler {
   petriNet: RedePetri | null = null
 
   public createPetriNet() {
+    console.log('\n------- Criando Rede de Petri -------\n')
+
     this.petriNet = new RedePetri()
 
     // ------------------ Lugares ------------------
@@ -49,5 +51,7 @@ export class PetriNetHandler {
     this.petriNet.criaConexao(lugar8, transicao4, 1, true, false, false)
     this.petriNet.criaConexao(lugar9, transicao5, 1, true, false, false)
     this.petriNet.criaConexao(lugar10, transicao6, 1, true, false, false)
+
+    console.log('\n------- Finalizou criação da Rede de Petri -------\n')
   }
 }

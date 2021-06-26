@@ -46,6 +46,14 @@ export class Resource {
   }
 
   /**
+   * getUsed()
+   * @returns Resource used quantity
+   */
+  public getUsed() {
+    return this.used
+  }
+
+  /**
    * canAllocate()
    * @param quantity de recursos na fila
    * @returns se conseguiu alocar ou não
