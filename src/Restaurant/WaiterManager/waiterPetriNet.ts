@@ -68,7 +68,7 @@ export class WaiterPetriNet extends Process {
         scheduler.createProcess(
           new EatingTableHandler('EatingTableHandler-' + this.mesa, () =>
             // scheduler.normal(0.1, 45, 20, 8)
-            scheduler.normal(0.1, 45)
+            scheduler.normal(20, 8)
           )
         )
       )

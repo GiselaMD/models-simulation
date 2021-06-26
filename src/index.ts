@@ -13,8 +13,8 @@ waiterPetriNet.createPetriNet()
 // Quantidade de garçons
 waiterPetriNet.petriNet?.getLugarByLabel('garcomLivre')?.insereToken(5)
 
-// TODO: Criar o simulateBy().
 // TODO: Criar o excel de comparação do AnyLogic com o Motor.
+// TODO: Realizar os logs finais
 
 // ------------------------------ Recursos do sistema ------------------------------
 
@@ -46,6 +46,9 @@ export const mesas4Livres = scheduler.createResource(
 export const filaDeClientesNoCaixa1 = scheduler.createEntitySet(
   new EntitySet('cx1', 'FIFO' as Mode, 0)
 )
+
+filaDeClientesNoCaixa1.startLog(10)
+
 export const filaDeClienteSendoAtendidosNoCaixa1 = scheduler.createEntitySet(
   new EntitySet('filaDeClienteSendoAtendidosNoCaixa1', 'FIFO' as Mode, 0)
 )
@@ -63,6 +66,9 @@ export const filaRoteia = scheduler.createEntitySet(
 export const filaDePedidosEntrandoCozinha = scheduler.createEntitySet(
   new EntitySet('cozinha', 'FIFO' as Mode, 100)
 )
+
+filaDePedidosEntrandoCozinha.startLog(10)
+
 export const filaDePedidosSendoPreparados = scheduler.createEntitySet(
   new EntitySet('pedidoEsperandoEntrega', 'FIFO' as Mode, 100)
 )
@@ -74,6 +80,9 @@ export const filaDePedidosEsperandoEntrega = scheduler.createEntitySet(
 export const filaDeClientesNoBalcao = scheduler.createEntitySet(
   new EntitySet('filaBalcao', 'FIFO' as Mode, 100)
 )
+
+filaDeClientesNoBalcao.startLog(10)
+
 export const filaGarcomLimpaBalcao = scheduler.createEntitySet(
   new EntitySet('filaLimpaBalcao', 'FIFO' as Mode, 100)
 )
@@ -124,54 +133,12 @@ scheduler.startProcessNow(
 scheduler.startProcessNow(
   scheduler.createProcess(
     new RestroomRequestHandler('RestroomRequestHandler', () =>
-      scheduler.uniform(5, 15)
+      scheduler.normal(15, 5)
     )
   )
 )
 
 // ---------- Simulando o sistema ----------
-
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Uniform --> ', scheduler.uniform(5, 15))
-// console.log('Exponential --> ', scheduler.exponential(10))
-// console.log('Exponential --> ', scheduler.exponential(10))
-// console.log('Exponential --> ', scheduler.exponential(10))
-// console.log('Exponential --> ', scheduler.exponential(10))
-// console.log('Exponential --> ', scheduler.exponential(10))
-// console.log('Exponential --> ', scheduler.exponential(10))
-// console.log('Exponential --> ', scheduler.exponential(10))
-// console.log('Exponential --> ', scheduler.exponential(10))
-// console.log('Exponential --> ', scheduler.exponential(10))
-// console.log('Exponential --> ', scheduler.exponential(10))
-// console.log('Exponential --> ', scheduler.exponential(10))
-// console.log('Exponential --> ', scheduler.exponential(10))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
-// console.log('Normal --> ', scheduler.normal(10, 5))
 
 while (true) {
   console.log('\n=== Execução ===')
@@ -216,4 +183,24 @@ while (true) {
 // Simula o sistema até esgotar
 // scheduler.simulate()
 // scheduler.simulateOneStep()
-// scheduler.simulateUntil(20)
+// scheduler.simulateUntil(71)
+
+console.log('filaDeClientesNoCaixa1.getLog()', filaDeClientesNoCaixa1.getLog())
+console.log(
+  `filaDePedidosEntrandoCozinha.getLog()`,
+  filaDePedidosEntrandoCozinha.getLog()
+)
+
+console.log(
+  `filaDeClientesNoCaixa1.averageTimeInSet();`,
+  filaDeClientesNoCaixa1.averageTimeInSet()
+)
+console.log(
+  `filaDePedidosEntrandoCozinha.averageTimeInSet();`,
+  filaDePedidosEntrandoCozinha.averageTimeInSet()
+)
+
+console.log(
+  `filaDeClientesNoBalcao.averageTimeInSet();`,
+  filaDeClientesNoBalcao.averageTimeInSet()
+)

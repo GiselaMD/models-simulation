@@ -113,8 +113,16 @@ export class Scheduler {
 
   private async executeSimulation() {
     // Atualiza o tempo do modelo pro tempo atual do processo
-    this.time = this.getNextTime()
+
+    const nextTime = this.getNextTime()
+
+    if (nextTime != this.time) {
+      this.entitySetList.forEach(entitySet => entitySet.timeCallback(nextTime))
+    }
+
+    this.time = nextTime
     console.log(colors.bgBlue('TEMPO ATUAL: ' + this.time))
+
     // const processes = this.processSchedule[time]
 
     // Varre os processos do tempo "time"
@@ -253,10 +261,8 @@ export class Scheduler {
    * @returns
    */
   public simulateBy(duration: number) {
-    // TODO: Implementar o simulateBy.
-    while (this.time < duration) {
-      this.executeSimulation()
-    }
+    const finalTime = duration + this.time
+    this.simulateUntil(finalTime)
   }
 
   /**
@@ -458,13 +464,7 @@ export class Scheduler {
    * @param stdDeviationValue utiliza o valor de desvio do valor
    * @returns o resultado da operação
    */
-  // TODO: Precisa ter opção de colocar 2 ou 4 parâmetros
-  public normal(
-    meanValue: number,
-    stdDeviationValue: number,
-    a: number = 0,
-    b: number = 0
-  ) {
+  public normal(meanValue: number, stdDeviationValue: number) {
     let normalResult = rvg.normal(meanValue, stdDeviationValue)
     while (normalResult < 0) {
       normalResult = rvg.normal(meanValue, stdDeviationValue)

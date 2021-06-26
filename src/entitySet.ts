@@ -33,6 +33,8 @@ export class EntitySet {
   setTime: TimeInSet
   log: Log[]
   isRunningLog: boolean
+  timeGap: number
+  lastLogTime: number
 
   constructor(name: string, mode: Mode, maxPossibleSize: number) {
     this.id = null
@@ -44,6 +46,8 @@ export class EntitySet {
     this.setTime = {}
     this.log = []
     this.isRunningLog = false
+    this.timeGap = 0
+    this.lastLogTime = 0
   }
 
   /**
@@ -124,7 +128,7 @@ export class EntitySet {
 
     this.setTime[entity.id] = {
       duration: 0,
-      creation: Date.now(),
+      creation: scheduler.getTime(),
     }
 
     this.updateSetSize()
@@ -165,9 +169,12 @@ export class EntitySet {
 
     this.updateSetSize()
 
-    // duration = Date.now - creation
     const entityTime = this.setTime[entityRemoved.id]
-    entityTime.duration = Date.now() - entityTime.creation
+
+    entityTime.duration = scheduler.getTime() - entityTime.creation
+    console.log(`entityRemoved.getName()`, entityRemoved.getName())
+    console.log(`scheduler.getTime()`,  scheduler.getTime())
+    console.log(`entityTime.creation`, entityTime.creation)
 
     return entityRemoved
   }
@@ -188,7 +195,7 @@ export class EntitySet {
 
     // duration = Date.now - creation
     const entityTime = this.setTime[removed.id]
-    entityTime.duration = Date.now() - entityTime.creation
+    entityTime.duration = scheduler.getTime() - entityTime.creation
 
     return removed
   }
@@ -275,7 +282,7 @@ export class EntitySet {
         max = time.duration
       }
     }
-    const mean = total / timeValues.length
+    const mean = timeValues.length > 0 ? total / timeValues.length : 0
     return { mean, max }
   }
 
@@ -296,17 +303,25 @@ export class EntitySet {
   }
 
   /**
+   * timeCallback()
+   * @param time
+   */
+  public timeCallback(time: number) {
+    if (this.isRunningLog && time - this.lastLogTime >= this.timeGap) {
+      this.log.push({ time, size: this.set.length })
+      this.lastLogTime = time
+    }
+  }  
+
+  /**
    * startLog(timeGap)
    * @param timeGap - período em segundos
    * @returns Dispara a coleta (log) do tamanho do conjunto;
    * Esta coleta é realizada a cada timeGap unidades de tempo
    */
   public startLog(timeGap: number): void {
-    setInterval(() => {
-      if (this.isRunningLog) {
-        this.log.push({ time: Date.now(), size: this.set.length })
-      }
-    }, timeGap * 1000)
+    this.isRunningLog = true
+    this.timeGap = timeGap
   }
 
   /**
