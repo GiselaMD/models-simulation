@@ -145,7 +145,6 @@ export class Scheduler {
         this.time
       ].shift() as ProcessItem
       // const [{ engineProcess, type }] = processes.splice(0, 1)
-      
 
       // Valida se é o ínicio ou fim da execução do processo
       if (type === 'start') {
@@ -262,10 +261,8 @@ export class Scheduler {
    * @returns
    */
   public simulateBy(duration: number) {
-    // TODO: Implementar o simulateBy.
-    while (this.time < duration) {
-      this.executeSimulation()
-    }
+    const finalTime = duration + this.time
+    this.simulateUntil(finalTime)
   }
 
   /**
@@ -467,11 +464,7 @@ export class Scheduler {
    * @param stdDeviationValue utiliza o valor de desvio do valor
    * @returns o resultado da operação
    */
-  // TODO: Precisa ter opção de colocar 2 ou 4 parâmetros
-  public normal(
-    meanValue: number,
-    stdDeviationValue: number,
-  ) {
+  public normal(meanValue: number, stdDeviationValue: number) {
     let normalResult = rvg.normal(meanValue, stdDeviationValue)
     while (normalResult < 0) {
       normalResult = rvg.normal(meanValue, stdDeviationValue)
