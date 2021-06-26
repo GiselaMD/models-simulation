@@ -1,19 +1,25 @@
-import { uuid } from 'uuidv4'
-
 export class Process {
   name: string
-  processId: string
-  duration: number
+  id: string | null
+  duration: () => number
   active: boolean
 
-  constructor(name: string, duration: number) {
+  constructor(name: string, duration: () => number) {
+    this.id = null
     this.name = name
     this.duration = duration
-    this.processId = uuid()
     this.active = true
   }
 
   // Métodos
+
+  /**
+   * getId()
+   * @returns ID do processo
+   */
+  public getId() {
+    return this.id
+  }
 
   /**
    * getDuration()
@@ -24,10 +30,18 @@ export class Process {
   }
 
   /**
+   * setId()
+   * @param id - Id do process
+   */
+  public setId(id: string): void {
+    this.id = id
+  }
+
+  /**
    * isActive()
    * @returns Status do processo, ativo ou não
    */
-  public isActive() {
+  public isActive(): boolean {
     return this.active
   }
 
@@ -35,7 +49,27 @@ export class Process {
    * activate(bool)
    * @returns seta o status do processo, ativo ou não
    */
-  public activate(bool: boolean) {
-    this.active = bool
+  public setActive(active: boolean) {
+    this.active = active
   }
+
+  /**
+   * canExecute()
+   * @returns se o processo pode ser executado
+   */
+  public canExecute() {
+    return true
+  }
+
+  /**
+   * executeOnStart()
+   * @returns faz antes de executar o processo
+   */
+  public executeOnStart() {}
+
+  /**
+   * executeOnEnd()
+   * @returns faz depois de executar o processo
+   */
+  public executeOnEnd(): void {}
 }

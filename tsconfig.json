@@ -21,7 +21,8 @@
     "baseUrl": ".",
     "rootDirs": ["./src"],
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "suppressImplicitAnyIndexErrors": true
   },
   "typedocOptions": {
     "entryPoints": ["src"],
