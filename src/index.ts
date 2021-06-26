@@ -27,9 +27,6 @@ export const atendenteCx2 = scheduler.createResource(
 export const cozinheiros = scheduler.createResource(
   new Resource('cozinheiros', 5, () => scheduler.getTime())
 )
-// export const garcons = scheduler.createResource(
-//   new Resource('garcom', 5, () => scheduler.getTime())
-// )
 export const bancosLivres = scheduler.createResource(
   new Resource('bancosBalcao', 10, () => scheduler.getTime())
 )
@@ -47,18 +44,14 @@ export const filaDeClientesNoCaixa1 = scheduler.createEntitySet(
   new EntitySet('cx1', 'FIFO' as Mode, 0)
 )
 
+filaDeClientesNoCaixa1.startLog(10)
+
 export const filaDeClientesNoCaixa2 = scheduler.createEntitySet(
   new EntitySet('cx2', 'FIFO' as Mode, 0)
 )
 
-//filaDeClientesNoCaixa1.startLog(10)
+filaDeClientesNoCaixa2.startLog(10)
 
-export const filaDeClienteSendoAtendidosNoCaixa1 = scheduler.createEntitySet(
-  new EntitySet('filaDeClienteSendoAtendidosNoCaixa1', 'FIFO' as Mode, 0)
-)
-export const filaDeClienteSendoAtendidosNoCaixa2 = scheduler.createEntitySet(
-  new EntitySet('filaDeClienteSendoAtendidosNoCaixa2', 'FIFO' as Mode, 0)
-)
 export const filaRoteia = scheduler.createEntitySet(
   new EntitySet('filaRoteia', 'FIFO' as Mode, 0)
 )
@@ -68,36 +61,48 @@ export const filaDePedidosEntrandoCozinha = scheduler.createEntitySet(
   new EntitySet('cozinha', 'FIFO' as Mode, 100)
 )
 
-//filaDePedidosEntrandoCozinha.startLog(10)
+filaDePedidosEntrandoCozinha.startLog(10)
 
 export const filaDePedidosSendoPreparados = scheduler.createEntitySet(
   new EntitySet('pedidoEsperandoEntrega', 'FIFO' as Mode, 100)
 )
+
+filaDePedidosSendoPreparados.startLog(10)
+
 export const filaDePedidosEsperandoEntrega = scheduler.createEntitySet(
   new EntitySet('pedidoEsperandoEntrega', 'FIFO' as Mode, 100)
 )
+
+filaDePedidosEsperandoEntrega.startLog(10)
 
 // Bancos balcao
 export const filaDeClientesNoBalcao = scheduler.createEntitySet(
   new EntitySet('filaBalcao', 'FIFO' as Mode, 100)
 )
 
-// filaDeClientesNoBalcao.startLog(10)
+filaDeClientesNoBalcao.startLog(10)
 
 export const filaGarcomLimpaBalcao = scheduler.createEntitySet(
   new EntitySet('filaLimpaBalcao', 'FIFO' as Mode, 100)
 )
+
 export const filaDeClientesEsperandoPedidoNoBalcao = scheduler.createEntitySet(
   new EntitySet('esperandoNoBalcao', 'FIFO' as Mode, 100)
 )
+
 export const filaDeClientesComendoNoBalcao = scheduler.createEntitySet(
   new EntitySet('comendoBalcao', 'FIFO' as Mode, 100)
 )
+
+filaDeClientesComendoNoBalcao.startLog(10)
 
 // Mesas de 2 lugares
 export const filaDeClientesNaMesa2 = scheduler.createEntitySet(
   new EntitySet('filaM2', 'FIFO' as Mode, 100)
 )
+
+filaDeClientesNaMesa2.startLog(10)
+
 export const filaGarcomLimpaMesa2 = scheduler.createEntitySet(
   new EntitySet('filaLimpaM2', 'FIFO' as Mode, 100)
 )
@@ -108,10 +113,15 @@ export const filaDeClientesComendoNaMesa2 = scheduler.createEntitySet(
   new EntitySet('comendoM2', 'FIFO' as Mode, 100)
 )
 
+filaDeClientesComendoNaMesa2.startLog(10)
+
 // Mesas de 4 lugares
 export const filaDeClientesNaMesa4 = scheduler.createEntitySet(
   new EntitySet('filaM4', 'FIFO' as Mode, 100)
 )
+
+filaDeClientesNaMesa4.startLog(10)
+
 export const filaGarcomLimpaMesa4 = scheduler.createEntitySet(
   new EntitySet('filaLimpaM4', 'FIFO' as Mode, 100)
 )
@@ -121,6 +131,8 @@ export const filaDeClientesEsperandoPedidoNaMesa4 = scheduler.createEntitySet(
 export const filaDeClientesComendoNaMesa4 = scheduler.createEntitySet(
   new EntitySet('comendoM4', 'FIFO' as Mode, 100)
 )
+
+filaDeClientesComendoNaMesa4.startLog(10)
 
 // ------------------------------ Gerenciando os processos do sistema ------------------------------
 
@@ -180,29 +192,3 @@ while (true) {
     break
   }
 }
-
-// Simula o sistema até esgotar
-// scheduler.simulate()
-// scheduler.simulateOneStep()
-// scheduler.simulateUntil(71)
-
-// TODO: Acho que não precisa mais
-console.log('filaDeClientesNoCaixa1.getLog()', filaDeClientesNoCaixa1.getLog())
-console.log(
-  `filaDePedidosEntrandoCozinha.getLog()`,
-  filaDePedidosEntrandoCozinha.getLog()
-)
-
-console.log(
-  `filaDeClientesNoCaixa1.averageTimeInSet();`,
-  filaDeClientesNoCaixa1.averageTimeInSet()
-)
-console.log(
-  `filaDePedidosEntrandoCozinha.averageTimeInSet();`,
-  filaDePedidosEntrandoCozinha.averageTimeInSet()
-)
-
-console.log(
-  `filaDeClientesNoBalcao.averageTimeInSet();`,
-  filaDeClientesNoBalcao.averageTimeInSet()
-)

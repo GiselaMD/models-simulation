@@ -263,6 +263,7 @@ export class Scheduler {
       this.executeSimulation()
     }
     this.showSummary()
+    process.exit(0)
   }
 
   /**
@@ -278,6 +279,7 @@ export class Scheduler {
     }
     this.isDebbuger = false
     this.showSummary()
+    process.exit(0)
   }
 
   /**
@@ -288,6 +290,7 @@ export class Scheduler {
   public simulateBy(duration: number) {
     const finalTime = duration + this.time
     this.simulateUntil(finalTime)
+    process.exit(0)
   }
 
   /**
@@ -301,6 +304,7 @@ export class Scheduler {
       this.executeSimulation()
     }
     this.showSummary()
+    process.exit(0)
   }
 
   // ---------- criação, destruição e acesso para componentes ----------
@@ -583,63 +587,71 @@ export class Scheduler {
   private showSummary() {
     console.log('\n------ RESUMO DA EXECUÇÃO ------\n')
     console.log('Simulation duration:', this.getTotalDuration())
-    console.log('Total de Entidades Criadas: ', this.getEntityTotalQuantity())
+    console.log('Total de Entidades Criadas:', this.getEntityTotalQuantity())
     console.log(
-      'Total de Entidades Ativas: ',
+      'Total de Entidades Ativas:',
       this.getActiveEntityTotalQuantity()
     )
     console.log(
-      'Total de Entidades Destruídas: ',
+      'Total de Entidades Destruídas:',
       this.getDestroyedEntityTotalQuantity()
     )
     console.log(
-      'Tempo Médio das Entidades no Modelo: ',
+      'Tempo Médio das Entidades no Modelo:',
       this.averageTimeInModel()
     )
     console.log(
-      'Número Máximo de Entidades no Modelo: ',
+      'Número Máximo de Entidades no Modelo:',
       this.maxEntitiesPresent()
     )
 
-    console.log('Log Fila Caixa 1: ', filaDeClientesNoCaixa1.getLog())
-    console.log('Log Fila Caixa 2: ', filaDeClientesNoCaixa2.getLog())
+    console.log('Log Fila Caixa 1:', filaDeClientesNoCaixa1.getLog())
     console.log(
-      'Log Pedidos Entrando na Cozinha: ',
+      'Tempo Médio Fila Caixa 1:',
+      filaDeClientesNoCaixa1.averageTimeInSet()
+    )
+    console.log('Log Fila Caixa 2:', filaDeClientesNoCaixa2.getLog())
+    console.log(
+      'Log Pedidos Entrando na Cozinha:',
       filaDePedidosEntrandoCozinha.getLog()
     )
     console.log(
-      'Log Pedidos Sendo Preparados: ',
+      'Tempo Médio Pedidos Entrando na Cozinha:',
+      filaDePedidosEntrandoCozinha.averageTimeInSet()
+    )
+    console.log(
+      'Log Pedidos Sendo Preparados:',
       filaDePedidosSendoPreparados.getLog()
     )
     console.log(
-      'Log Pedidos Esperando entrega: ',
+      'Log Pedidos Esperando entrega:',
       filaDePedidosEsperandoEntrega.getLog()
     )
     console.log(
       `${cozinheiros.getUsed()} de ${cozinheiros.getQuantity()} Cozinheiros em uso`
     )
     console.log(
-      'Log de clientes na fila do balcão: ',
+      'Log de clientes na fila do balcão:',
       filaDeClientesNoBalcao.getLog()
     )
     console.log(
-      'Log de clientes na fila da mesa de 2 lugares: ',
+      'Log de clientes na fila da mesa de 2 lugares:',
       filaDeClientesNaMesa2.getLog()
     )
     console.log(
-      'Log de clientes na fila da mesa de 4 lugares: ',
+      'Log de clientes na fila da mesa de 4 lugares:',
       filaDeClientesNaMesa4.getLog()
     )
     console.log(
-      'Log de clientes comendo no balcão: ',
+      'Log de clientes comendo no balcão:',
       filaDeClientesComendoNoBalcao.getLog()
     )
     console.log(
-      'Log de clientes comendo na mesa de 2 lugares: ',
+      'Log de clientes comendo na mesa de 2 lugares:',
       filaDeClientesComendoNaMesa2.getLog()
     )
     console.log(
-      'Log de clientes comendo na mesa de 4 lugares: ',
+      'Log de clientes comendo na mesa de 4 lugares:',
       filaDeClientesComendoNaMesa4.getLog()
     )
   }
